@@ -41,19 +41,6 @@ import util
 import time
 import search
 
-class ANNAgent(Agent):
-    "An agent that goes West until it can't."
-
-    def getAction(self, state):
-        "The agent receives a GameState (defined in pacman.py)."
-        # 1.) Get the grid.
-        # 2.) Input the grid to ANN.
-        # 3.) Return the results from ANN.
-        if Directions.WEST in state.getLegalPacmanActions():
-            return Directions.WEST
-        else:
-            return Directions.STOP
-
 
 class GoWestAgent(Agent):
     "An agent that goes West until it can't."
