@@ -651,7 +651,7 @@ class Game:
 
         while not self.gameOver:
             print"Magic happening: %d" %avocados
-            time.sleep(0.5) # @@@
+            #time.sleep(1) # @@@
             avocados+=1
             # Fetch the next agent
             agent = self.agents[agentIndex]

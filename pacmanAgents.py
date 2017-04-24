@@ -17,19 +17,88 @@ from game import Agent
 import random
 import game
 import util
+import time 
+
+
 
 class ANNAgent(Agent):
     "An agent that goes West until it can't."
 
-    def getAction(self, state):
+    def getGrid(self, state): 
+
+        pacman_position = state.getPacmanPosition()
+        grid_start = [pacman_position[0]-2,pacman_position[1]-2]
+        ghost1 = [state.getGhostPosition(1)[0] - grid_start[0], state.getGhostPosition(1)[1] - grid_start[1] ]
+        ghost2 = [state.getGhostPosition(2)[0] - grid_start[0], state.getGhostPosition(2)[1] - grid_start[1] ]
+        food = state.getFood() 
+        capsules = state.getCapsules()
+
+        print(pacman_position)
+        print(grid_start)
+
+        walls = state.getWalls();
+        grid = []
+
+
+        for col in range(0,5):
+            grid.append([])
+            for row in range(0,5):
+                if ( (row + grid_start[1]) >= len(walls[0]) ) or ( (col + grid_start[0]) >= 20 ) or ( (row + grid_start[1]) < 0 ) or ( (col + grid_start[0]) <0 ):
+                    grid[col].append('& ')
+                else:
+                    if walls[ col+grid_start[0] ][ row+grid_start[1] ] == True:
+                        grid[col].append('% ')
+                    elif food[ col+grid_start[0] ][ row+grid_start[1] ] == True:
+                        grid[col].append('o ')
+                    else:
+                        grid[col].append('  ')
+
+
+        grid[2][2] = '@ '
+        if ghost1[0] < 5 and ghost1[1] < 5 and ghost1[0] > -1 and ghost1[1] > -1:
+            grid[int(ghost1[0])][int(ghost1[1])] = 'X '
+        if ghost2[0] < 5 and ghost2[1] < 5 and ghost2[0] > -1 and ghost2[1] > -1:
+            grid[int(ghost2[0])][int(ghost2[1])] = 'X '
+
+        for i in range(0,len(capsules)):
+            distance = [capsules[i][0] - grid_start[0], capsules[i][1]-grid_start[1] ]
+            if distance[0] < 5 and distance[1] < 5 and distance[0] > -1 and distance[1] > -1:
+                grid[distance[0]][distance[1]] = '0 '
+
+
+
+        return grid
+
+
+    def getAction(self, state):#pass all game state
         "The agent receives a GameState (defined in pacman.py)."
+
+        grid = self.getGrid(state)
+
+        for col in range(4,-1,-1):
+            for row in range(0,5):
+                print(grid[row][col]),
+            print("\n")
+        #time.sleep(1)
+
+        #for i,a in enumerate(walls):
+            #print i, ": ", a
+
+
         # 1.) Get the grid.
         # 2.) Input the grid to ANN.
         # 3.) Return the results from ANN.
-        if Directions.WEST in state.getLegalPacmanActions():
-            return Directions.WEST
-        else:
-            return Directions.STOP
+
+
+        legal = state.getLegalPacmanActions()
+        current = state.getPacmanState().configuration.direction
+        if current == Directions.STOP: current = Directions.NORTH
+        left = Directions.LEFT[current]
+        if left in legal: return left
+        if current in legal: return current
+        if Directions.RIGHT[current] in legal: return Directions.RIGHT[current]
+        if Directions.LEFT[left] in legal: return Directions.LEFT[left]
+        return Directions.STOP
 
 class LeftTurnAgent(game.Agent):
     "An agent that turns left at every opportunity"
