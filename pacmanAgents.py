@@ -18,6 +18,7 @@ import random
 import game
 import util
 import time 
+#import ann
 
 
 
@@ -74,12 +75,22 @@ class ANNAgent(Agent):
         "The agent receives a GameState (defined in pacman.py)."
 
         grid = self.getGrid(state)
+  
+        #1d array to hold pass as input to ANN
+        input_ = []
+        for col in range(4,-1,-1):
+            for row in range(0,5):
+                input_.append(grid[row][col])
+
+        print(counter)
+        print(input_)
+        print("\n")
 
         for col in range(4,-1,-1):
             for row in range(0,5):
                 print(grid[row][col]),
             print("\n")
-        #time.sleep(1)
+        time.sleep(4)
 
         #for i,a in enumerate(walls):
             #print i, ": ", a
