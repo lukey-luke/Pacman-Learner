@@ -14,6 +14,7 @@
 
 from pacman import Directions
 from game import Agent
+from ann import Ann
 import random
 import game
 import util
@@ -81,14 +82,16 @@ class ANNAgent(Agent):
         for col in range(4,-1,-1):
             for row in range(0,5):
                 input_.append(grid[row][col])
+        myAnn = Ann()
+        directiono = myAnn.processInput(input_)
+        legal = state.getLegalPacmanActions()
 
-#        print(input_)
-
-        for col in range(4,-1,-1):
-            for row in range(0,5):
-                print(grid[row][col]),
-            print("\n")
-        time.sleep(1)
+        #for col in range(4,-1,-1):
+        #    for row in range(0,5):
+        #        print(grid[row][col]),
+        #    print("\n")
+        #time.sleep(1)
+        
 
         #for i,a in enumerate(walls):
             #print i, ": ", a
@@ -99,6 +102,7 @@ class ANNAgent(Agent):
         # 3.) Return the results from ANN.
 
 
+        """
         legal = state.getLegalPacmanActions()
         current = state.getPacmanState().configuration.direction
         if current == Directions.STOP: current = Directions.NORTH
@@ -108,6 +112,7 @@ class ANNAgent(Agent):
         if Directions.RIGHT[current] in legal: return Directions.RIGHT[current]
         if Directions.LEFT[left] in legal: return Directions.LEFT[left]
         return Directions.STOP
+        """
 
 class LeftTurnAgent(game.Agent):
     "An agent that turns left at every opportunity"
