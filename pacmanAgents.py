@@ -82,15 +82,13 @@ class ANNAgent(Agent):
             for row in range(0,5):
                 input_.append(grid[row][col])
 
-        print(counter)
-        print(input_)
-        print("\n")
+#        print(input_)
 
         for col in range(4,-1,-1):
             for row in range(0,5):
                 print(grid[row][col]),
             print("\n")
-        time.sleep(4)
+        time.sleep(1)
 
         #for i,a in enumerate(walls):
             #print i, ": ", a
