@@ -23,9 +23,16 @@ import time
 
 
 class ANNAgent(Agent):
-    "An agent that goes West until it can't."
+    "An agent that uses an ANN with 5x5 grid around pacman and outputs a direction to go"
 
     def getGrid(self, state): 
+        #Function that parses through the state to extract:
+        #    -pacmans position
+        #    -ghost position
+        #    -food positions
+        #    -capsule positions
+        #    -start of the grid
+        # -it then populates the grid based on the parsing"
 
         pacman_position = state.getPacmanPosition()
         grid_start = [pacman_position[0]-2,pacman_position[1]-2]
@@ -33,39 +40,40 @@ class ANNAgent(Agent):
         ghost2 = [state.getGhostPosition(2)[0] - grid_start[0], state.getGhostPosition(2)[1] - grid_start[1] ]
         food = state.getFood() 
         capsules = state.getCapsules()
-
-        #print(pacman_position) # okay to delete these?
-        #print(grid_start)
-
         walls = state.getWalls();
+
+
+        # Populating the grid with walls,pellets, and out of bound: @@@
+        #   -starting at the starting position(pacman's row-2 pacman's col-2)
         grid = []
-
-
-        # dafuq Chris? No comments? No identifying what anything is anywhere!?
         for col in range(0,5):
-            grid.append([])
+            grid.append([]) #append a list to the grid 5 times(making an empty 2d list)
             for row in range(0,5):
+                #checks for out of bound locations, making '&' if it the spot is out 
                 if ( (row + grid_start[1]) >= len(walls[0]) ) or ( (col + grid_start[0]) >= 20 ) or ( (row + grid_start[1]) < 0 ) or ( (col + grid_start[0]) <0 ):
-                    grid[col].append('& ')
+                    grid[col].append('&') # out of bounds
                 else:
+                    #
                     if walls[ col+grid_start[0] ][ row+grid_start[1] ] == True:
-                        grid[col].append('% ')# why is there a space after the character here!? @@@
+                        grid[col].append('%')# wall 
                     elif food[ col+grid_start[0] ][ row+grid_start[1] ] == True:
-                        grid[col].append('o ')
+                        grid[col].append('o')# pellet
                     else:
-                        grid[col].append('  ')
+                        grid[col].append(' ')# empty space
 
 
-        grid[2][2] = '@ '
+        grid[2][2] = '@' #pacman location(always in the middle)
+        #add both ghost to grid if position is inside grid range 
         if ghost1[0] < 5 and ghost1[1] < 5 and ghost1[0] > -1 and ghost1[1] > -1:
-            grid[int(ghost1[0])][int(ghost1[1])] = 'X '
+            grid[int(ghost1[0])][int(ghost1[1])] = 'X'
         if ghost2[0] < 5 and ghost2[1] < 5 and ghost2[0] > -1 and ghost2[1] > -1:
-            grid[int(ghost2[0])][int(ghost2[1])] = 'X '
+            grid[int(ghost2[0])][int(ghost2[1])] = 'X'
 
+        #iterates through capsule list and adds if position is inside grid range
         for i in range(0,len(capsules)):
             distance = [capsules[i][0] - grid_start[0], capsules[i][1]-grid_start[1] ]
             if distance[0] < 5 and distance[1] < 5 and distance[0] > -1 and distance[1] > -1:
-                grid[distance[0]][distance[1]] = '0 '
+                grid[distance[0]][distance[1]] = '0'
 
 
 
