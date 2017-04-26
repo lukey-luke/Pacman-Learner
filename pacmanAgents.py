@@ -14,7 +14,7 @@
 
 from pacman import Directions
 from game import Agent
-#from ann import Ann
+from ann import Ann
 import random
 import game
 import util
@@ -41,6 +41,7 @@ class ANNAgent(Agent):
         grid = []
 
 
+        # dafuq Chris? No comments? No identifying what anything is anywhere!?
         for col in range(0,5):
             grid.append([])
             for row in range(0,5):
@@ -48,7 +49,7 @@ class ANNAgent(Agent):
                     grid[col].append('& ')
                 else:
                     if walls[ col+grid_start[0] ][ row+grid_start[1] ] == True:
-                        grid[col].append('% ')
+                        grid[col].append('% ')# why is there a space after the character here!? @@@
                     elif food[ col+grid_start[0] ][ row+grid_start[1] ] == True:
                         grid[col].append('o ')
                     else:
@@ -76,16 +77,39 @@ class ANNAgent(Agent):
 
         grid = self.getGrid(state)
   
-        #1d array to hold pass as input to ANN
+        #1d array to pass as input to ANN
         input_ = []
         for col in range(4,-1,-1):
             for row in range(0,5):
                 input_.append(grid[row][col])
-        myAnn = Ann()
-        predictedDirection = myAnn.processInput(input_)
-        legal = state.getLegalPacmanActions()
 
+        del input_[12]# we don't need the square pacman is in...
+        arrayForAnn = []
+
+        #Python does not have a switch statement, so I just created function for mapping these
+        # Alternatively we could use a Dictionary/Hash Table
+        # Should only ever return one of the values inside {}, not 1.337
+        def switch_statement(argument):
+            switcher = {
+                '& ': 0.99, # OutOfBounds
+                '% ': 0.90, # Wall
+                'X ': 0.75, # Ghost
+                '  ': 0.50, # Empty
+                'o ': 0.25, # Food
+                '0 ': 0.20, # Capsule
+            }
+            return switcher.get(argument, 1.337)
+
+        for symbolicNonsense in input_:
+            arrayForAnn.append(switch_statement(symbolicNonsense))
+            
+        myAnn = Ann()
+        predictedDirection = myAnn.processInput(arrayForAnn)
+        #legal = state.getLegalPacmanActions()
+
+        #if predictedDirection in state.getLegalPacmanActions():
         if predictedDirection in state.getLegalPacmanActions():
+            #return predictedDirection
             return predictedDirection
         else:
             return Directions.STOP
