@@ -34,8 +34,8 @@ class ANNAgent(Agent):
         food = state.getFood() 
         capsules = state.getCapsules()
 
-        print(pacman_position)
-        print(grid_start)
+        #print(pacman_position) # okay to delete these?
+        #print(grid_start)
 
         walls = state.getWalls();
         grid = []

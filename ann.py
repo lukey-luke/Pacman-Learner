@@ -66,7 +66,6 @@ class Ann:
             self.data[i] = tempList#add newly created layer to network
 
     def processInput(self, listOfInputs):
-        print "processing input"
         self.step1(listOfInputs)
         self.step2and3()
         return self.getDirection()
@@ -103,7 +102,6 @@ class Ann:
             if self.data[-1][j].aVal > maxVal:
                 maxVal = self.data[-1][j].aVal
                 goThisWay = self.directionMapping[j]
-                print "direction set to directionMapping[", j, "]"
         return goThisWay
 
 

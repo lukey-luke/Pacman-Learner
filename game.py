@@ -570,16 +570,15 @@ class Game:
         sys.stderr = OLD_STDERR
 
 
+    # This is where the magic happens.
     def run( self ):
         """
         Main control loop for game play.
         """
-        print '###################################' # @@@
-        print '# This is where the magic happens #'
-        print '###################################'
         self.display.initialize(self.state.data)
         self.numMoves = 0
 
+        """
         print ''
         print '###################################' # @@@
         something = self.state.getPacmanState
@@ -607,6 +606,7 @@ class Game:
         #print 'Ghost positions: '
                     
             #print something4[j][0]
+        """
 
         ###self.display.initialize(self.state.makeObservation(1).data)
         # inform learning agents of the game start
@@ -647,12 +647,8 @@ class Game:
 
         agentIndex = self.startingIndex
         numAgents = len( self.agents )
-        avocados = 0
 
         while not self.gameOver:
-            print"Magic happening: %d" %avocados
-            #time.sleep(1) # @@@
-            avocados+=1
             # Fetch the next agent
             agent = self.agents[agentIndex]
             move_time = 0
@@ -754,7 +750,6 @@ class Game:
 
             if _BOINC_ENABLED:
                 boinc.set_fraction_done(self.getProgress())
-            print"magical"
 
         # inform a learning agent of the game result
         for agentIndex, agent in enumerate(self.agents):
