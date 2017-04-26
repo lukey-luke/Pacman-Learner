@@ -14,12 +14,11 @@
 
 from pacman import Directions
 from game import Agent
-from ann import Ann
+#from ann import Ann
 import random
 import game
 import util
 import time 
-#import ann
 
 
 
@@ -83,8 +82,13 @@ class ANNAgent(Agent):
             for row in range(0,5):
                 input_.append(grid[row][col])
         myAnn = Ann()
-        directiono = myAnn.processInput(input_)
+        predictedDirection = myAnn.processInput(input_)
         legal = state.getLegalPacmanActions()
+
+        if predictedDirection in state.getLegalPacmanActions():
+            return predictedDirection
+        else:
+            return Directions.STOP
 
         #for col in range(4,-1,-1):
         #    for row in range(0,5):
