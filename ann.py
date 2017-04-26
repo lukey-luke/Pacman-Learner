@@ -1,9 +1,9 @@
-import math
+from math import exp
 from random import randint
 from pacmanAgents import Directions
 LENGTH_OF_INPUT  = 24
 LENGTH_OF_OUTPUT = 4
-NUM_OF_LAYERS    = 2
+NUM_OF_LAYERS    = 5
 
 #Enumish things
 ghost   = 1
@@ -18,50 +18,104 @@ class Neuron:
         self.aVal    = 0
         #self.delta   = 0
         self.weights = []
-        for i in range(0, LENGTH_OF_OUTPUT)):# right when we have a neuron, give it 4 rand wghts
-            self.weights.append( random.uniform(0.1, 1.9) ) # @@@
+        #for i in range(0, LENGTH_OF_OUTPUT)):# right when we have a neuron, give it 4 rand wghts
+        #    self.weights.append( random.uniform(0.1, 1.9) ) # @@@
 
 
 class Ann:
     def __init__(self):
-        self.data = [][] #where the actual ann's neurons go
+        self.data = [[] for l in range(NUM_OF_LAYERS)] #where the actual ann's neurons go
         self.m_numIterations =0
         self.m_alpha =0
         self.inputs  = []
-        for i in LENGTH_OF_INPUT:
-            temp = Neuron()
-            self.data[].append(temp)
+        self.encodings = [
+                {0.1, 0.1, 0.1, 0.9}, #North
+                {0.1, 0.1, 0.9, 0.1}, #East
+                {0.1, 0.9, 0.1, 0.1}, #South
+                {0.9, 0.1, 0.1, 0.1}  #West
+                ]
+        self.netStructure = [LENGTH_OF_INPUT, 16, 8, 4, LENGTH_OF_OUTPUT]
+        self.constructNetwork()
+
+#This function assigns neurons to elements of the 2d array,
+# ea containing a list of weights initialized to 0.1
+    def constructNetwork(self):
+        for i in range( 0, len(self.netStructure) ):# for layer i out of all layers
+            tempNeuron = Neuron()
+
+            #(if this is not the last layer)
+            if i < len(self.netStructure)-1:#create list of wghts corresponding to num neurons in next layer
+                tempNeuron.weights = [0.1] * self.netStructure[i+1]
+
+            # this layer should have # neurons specified by self.netStructure[i]
+            tempList = [tempNeuron] * self.netStructure[i]
+            self.data[i] = tempList#add newly created layer to network
 
     def processInput(self, listOfInputs):
-        step1(listOfInputs)
-        step2and3(listOfInputs)
-        return getDirection()
+        self.step1(listOfInputs)
+        self.step2and3(listOfInputs)
+        return self.getDirection()
 
     # Iterate through input layer a_j = x_j
     def step1(self, listOfInputs):
-        for i in listOfInput:
-            self.data[i][0].aVal = listOfInput[i]
+        for i in range( 0, len(listOfInputs) ):
+            self.data[0][i].aVal = listOfInputs[i]
 
     # Iterate through input layer rest of layers to assign a_j
     def step2and3(self, listOfInputs):
-        for j in range(1,len(listOfInputs)):
-            for i in range(0,len(listOfInputs[j]) ):
+        for l in range(1,len(self.data)):# For ea layer 1...L
+            for j in range(0,len(self.data[l]) ):# for ea node j in layer l
                 in_j = 0
-                    for k in listOfInputs[j-1]:
-                        in_j += self.data[j-1][k].aVal * self.data[j-1][k].weights[i]
+                for neuron in self.data[l-1]:# look a neurons from layer (l-1)
+                    in_j += neuron.aVal * neuron.weights[j]
 
-                    self.data[j][i].aVal = 1 / (1 + exp(-1 * in_j)
+                self.data[l][j].aVal = 1 / (1 + exp(-1 * in_j))
 
-                            # Look at output layer and figure out which direction it is saying to go
-                            def getDirection(self):
-                            maxVal = -9999
-                            direction = Directions.LEFT
-                            for i in range(1,4): # for ea node in output layer...
-                            if data[NUM_OF_LAYERS -1][i].aVal > maxVal:
+    #I can't beleive I am spending time here, but this is for sanity checking that net is O.K.
+    def printNetwork(self):
+        for j in range( 0, len(self.data) ):
+            for i in range( 0, len(self.data[j]) ):
+                print 'Neuron in layer ' +j +' node # ' +i +' has following weights: '
+                for k  in self.data[j][i].weights:
+                    print k
+
+    # Look at output layer and figure out which direction it is saying to go
+    def getDirection(self):
+        maxVal = -9999
+        direction = Directions.LEFT
+        # -1 goes backwards to specify last element in a list
+        for outputNode in self.data[-1]: # for ea node in output layer...
+            print outputNode.aVal
+        print "need to actually look at encoding and return a distance based on these aVals"
 
 
 
-
-
-
+myObjy = Ann()
+specialArray = [
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.0,
+        0.1,
+        0.9,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.1,
+        0.9,
+        0.1,
+        0.1,
+        0.1,
+        0.9,
+        0.9,
+        0.1,
+        0.9,
+        0.1
+        ]
+myObjy.processInput(specialArray)
 
