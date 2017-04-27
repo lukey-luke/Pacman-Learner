@@ -32,8 +32,7 @@ class ANNAgent(Agent):
         #    -food positions
         #    -capsule positions
         #    -start of the grid
-        # -it then populates the grid based on the parsing"
-
+        # -it then populates the grid based on the parsing
         pacman_position = state.getPacmanPosition()
         grid_start = [pacman_position[0]-2,pacman_position[1]-2]
         ghost1 = [state.getGhostPosition(1)[0] - grid_start[0], state.getGhostPosition(1)[1] - grid_start[1] ]
@@ -43,77 +42,66 @@ class ANNAgent(Agent):
         walls = state.getWalls()
         grid = []
 
-        # Populating the grid with walls,pellets, and out of bound: @@@
-        #   -starting at the starting position(pacman's row-2 pacman's col-2)
+        #INSERTS 4 NUMBERS INTO EACH CELL OF THE GRID BASED ON WHAT IT SEES
+        #   LEGEND:
+        #       -wall and out of bound: [0,0,0,1]
+        #       -empty spaces: [0,0,1,0]
+        #       -pellets and capsules: [0,1,0,0]
+        #       -Ghosts: [1,0,0,0]
+        #       -Pacman: @ is used as a placeholder, but will be deleted later
         grid = []
         for col in range(0,5):
             grid.append([]) #append a list to the grid 5 times(making an empty 2d list)
             for row in range(0,5):
                 #checks for out of bound locations, making '&' if it the spot is out 
                 if ( (row + grid_start[1]) >= len(walls[0]) ) or ( (col + grid_start[0]) >= 20 ) or ( (row + grid_start[1]) < 0 ) or ( (col + grid_start[0]) <0 ):
-                    grid[col].append('&') # out of bounds
+                    grid[col].append([0,0,0,1]) # out of bounds
                 else:
                     #
                     if walls[ col+grid_start[0] ][ row+grid_start[1] ] == True:
-                        grid[col].append('%')# wall 
+                        grid[col].append([0,0,0,1])# wall 
                     elif food[ col+grid_start[0] ][ row+grid_start[1] ] == True:
-                        grid[col].append('o')# pellet
+                        grid[col].append([0,1,0,0])# pellet
                     else:
-                        grid[col].append(' ')# empty space
+                        grid[col].append([0,0,1,0])# empty space
 
 
         grid[2][2] = '@' #pacman location(always in the middle)
 
         #add both ghost to grid if position is inside grid range 
         if ghost1[0] < 5 and ghost1[1] < 5 and ghost1[0] > -1 and ghost1[1] > -1:
-            grid[int(ghost1[0])][int(ghost1[1])] = 'X'
+            grid[int(ghost1[0])][int(ghost1[1])] = [1,0,0,0]
         if ghost2[0] < 5 and ghost2[1] < 5 and ghost2[0] > -1 and ghost2[1] > -1:
-            grid[int(ghost2[0])][int(ghost2[1])] = 'X'
+            grid[int(ghost2[0])][int(ghost2[1])] = [1,0,0,0]
 
         #iterates through capsule list and adds if position is inside grid range
         for i in range(0,len(capsules)):
             distance = [capsules[i][0] - grid_start[0], capsules[i][1]-grid_start[1] ]
             if distance[0] < 5 and distance[1] < 5 and distance[0] > -1 and distance[1] > -1:
-                grid[distance[0]][distance[1]] = '0'
+                grid[distance[0]][distance[1]] = [0,1,0,0]
+
+        input_grid= [] #&&&&
+        for col in range(4,-1,-1):
+            for row in range(0,5):
+                for i in range(0,len(grid[row][col])):
+                    input_grid.append(grid[row][col][i])
 
 
+        del input_grid[len(input_grid)/2] # we don't need the square pacman is in...
 
-        return grid
+        return input_grid
 
 
     def getAction(self, state):#pass all game state
         "The agent receives a GameState (defined in pacman.py)."
 
-        grid = self.getGrid(state)
-  
+        #getGrid returns a 2d array with 24 inputs of
+        input_grid = self.getGrid(state)
+
         #1d array to pass as input to ANN
-        input_ = []
-        for col in range(4,-1,-1):
-            for row in range(0,5):
-                input_.append(grid[row][col])
 
-        del input_[12]# we don't need the square pacman is in...
-        arrayForAnn = []
-
-        #Python does not have a switch statement, so I just created function for mapping these
-        # Alternatively we could use a Dictionary/Hash Table
-        # Should only ever return one of the values inside {}, not 1.337
-        def switch_statement(argument):
-            switcher = {
-                '& ': 0.99, # OutOfBounds
-                '% ': 0.90, # Wall
-                'X ': 0.75, # Ghost
-                '  ': 0.50, # Empty
-                'o ': 0.25, # Food
-                '0 ': 0.20, # Capsule
-            }
-            return switcher.get(argument, 1.337)
-
-        for symbolicNonsense in input_:
-            arrayForAnn.append(switch_statement(symbolicNonsense))
-            
         myAnn = Ann()
-        predictedDirection = myAnn.processInput(arrayForAnn)
+        predictedDirection = myAnn.processInput(input_grid)
         #legal = state.getLegalPacmanActions()
 
         #if predictedDirection in state.getLegalPacmanActions():
@@ -128,7 +116,7 @@ class ANNAgent(Agent):
         #        print(grid[row][col]),
         #    print("\n")
         #time.sleep(1)
-        
+
 
         #for i,a in enumerate(walls):
             #print i, ": ", a
