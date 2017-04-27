@@ -5,17 +5,16 @@ from game import Directions
 LENGTH_OF_INPUT  = 96
 LENGTH_OF_OUTPUT = 4
 NUM_OF_LAYERS    = 5
+ALPHA_VALUE      = 0.01
 
 class Neuron:
     def __init__(self):
-        self.aVal    = 0
-        #self.delta   = 0
-        self.weights = []
-        #for i in range(0, LENGTH_OF_OUTPUT)):# right when we have a neuron, give it 4 rand wghts
-        #    self.weights.append( random.uniform(0.1, 1.9) ) # @@@
+        self.aVal    = 0 # "a" value - the value this node holds essentially
+        self.delta   = 0 # measure of error for this node
+        self.weights = []# list of weights to all nodes in the next layer
 
 
-#A good majorify of fxns should just access data[][], as that is where the neurons are stored
+#Note to devs: A good majorify of fxns should just access data[][], as that is where the neurons are stored
 class Ann:
     """
     .___       .__  __  .__       .__  .__                __  .__               
@@ -42,7 +41,7 @@ class Ann:
                 Directions.SOUTH,
                 Directions.WEST
                 ]
-        self.netStructure = [LENGTH_OF_INPUT, 16, 8, 4, LENGTH_OF_OUTPUT]#just used to describe structure
+        self.netStructure = [LENGTH_OF_INPUT, 16, 8, 4, LENGTH_OF_OUTPUT]#solely used to describe structure
         self.constructNetwork()
         self.score     = -1#last score achieved by this ANN
         self.highScore = -1#highest score ever achieved by ANN
@@ -91,14 +90,33 @@ class Ann:
                 self.data[l][j].aVal = 1 / (1 + exp(-1 * in_j))
 
     # Only used for trainig
-    def step4(self):
-        for l in range(1,len(self.data)):# For ea layer 1...L
-            for j in range(0,len(self.data[l]) ):# for ea node j in layer l
-                in_j = 0
-                for neuron in self.data[l-1]:# look a neurons from layer (l-1)
-                    in_j += neuron.aVal * neuron.weights[j]
+    # Calculate error for ea node in output layer
+    # yVec is the vector of expected outputs - currently a placeholder until we know where this will be stored @@@
+    def step4(self, yVec):
+        for i in range(1,len(self.data[-1])):# For ea node in output layer...
+            data[-1][i].delta = self.data[-1][i] * (1 - self.data[-1][i]) * (yVec[i] - self.data[-1][i])
 
-                self.data[l][j].aVal = 1 / (1 + exp(-1 * in_j))
+    # Only used for trainig
+    # Calculate nodes' error for ea layer except the output layer
+    def step5and6(self):
+        for l in range(0, len(self.data)):
+            for n in range(0, len(self.data[l])):
+                newDeltaVal = self.data[l][n].aVal * (1 - self.data[l][n].aVal)
+                for w in range(0, len(self.data[l][n].weights)):
+                    newDeltaVal += (self.data[l][n].weights[w] * self.data[l+1][n].delta)
+
+                self.data[l][n].delta = newDeltaVal
+
+    # Only used for trainig
+    # Recaluclate weights based on error (delta values)
+    def step7(self):
+        for l in range(0, len(self.data)):
+            for n in range(0, self.data[l]):
+                for w in range(0, self.data[l][n].weights):
+                    newWeight = self.data[l][n].weights[w]
+                    newWeight += (ALPHA_VALUE * self.data[l][n].aVal * self.data[l+1][w].delta)
+
+                    self.data[l][n].weights[w] = newWeight
 
     """
        _____ __________.___
@@ -107,7 +125,7 @@ class Ann:
     /    |    \    |   |   |
     \____|__  /____|   |___|
             \/
-    These are function that are called externally or helper functions for
+    These are functions that are called externally or helper functions for
       functions that are called externally.
     """
     # Run steps 1, 2, and 3. Return direction for pacman based on provided input
@@ -144,37 +162,4 @@ class Ann:
         if newScore > self.highScore:
             self.highScore = newScore
 
-
-
-"""
-This is some dummy sample code used to test ANN.
-myObjy = Ann()
-specialArray = [
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.0,
-        0.1,
-        0.9,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.1,
-        0.9,
-        0.1,
-        0.1,
-        0.1,
-        0.9,
-        0.9,
-        0.1,
-        0.9,
-        0.1
-        ]
-myObjy.processInput(specialArray)
-"""
 
