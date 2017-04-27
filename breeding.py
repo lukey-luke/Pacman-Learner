@@ -1,4 +1,5 @@
 from ann import Ann
+from ann import *
 import operator
 from ann import Neuron
 
@@ -47,7 +48,7 @@ class Breeding:
 
    
    def mutateAnn(self, nextGen):
-      layer = randint(0, 5) #choose layer from nextGen ANN
+      layer = randint(0, NUM_OF_LAYERS) #choose layer from nextGen ANN
       neuron = randint(0, len(nextGen.data[layer])) #choose neuron from that layer
       weight = randint(0, len(nextGen.data[layer][neuron].weights)) #choose weight from that neuron
       plusOrMinus = random.uniform(0, 1)
