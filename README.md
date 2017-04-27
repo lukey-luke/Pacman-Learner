@@ -1,4 +1,4 @@
-usage for current testing: `python pacman.py -p ANNAgent -n NUMBER_OR_RUNS`
+usage for current testing: `python pacman.py -p ANNAgent -n NUMBER_OF_RUNS`
 
 # Pacman-Learner
 Artificial Neural Network to play Pacman game that is implemented in Python.
