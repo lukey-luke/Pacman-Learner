@@ -67,7 +67,7 @@ class Breeding:
       total = momScore + dadScore
       parents = [mom, dad] #parents in array for easier indexing
 
-      #choosing fittest parents, so they pass their genes
+      #choosing fittest parents, so they pass their genes more often
       if momScore > dadScore: 
          percent = momScore/total
          fittest = 0
