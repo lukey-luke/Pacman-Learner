@@ -24,6 +24,7 @@ from util import *
 import time, os
 import traceback
 import sys
+import util
 
 #######################
 # Parts worth reading #
@@ -727,7 +728,8 @@ class Game:
                 action = agent.getAction(observation)
             self.unmute()
 
-            # Execute the action
+            # Execute the action && 
+
             self.moveHistory.append( (agentIndex, action) )
             if self.catchExceptions:
                 try:
@@ -739,8 +741,10 @@ class Game:
                     return
             else:
                 self.state = self.state.generateSuccessor( agentIndex, action )
+                if agentIndex == 0: # CALLS THE TRAIN FUNCTION IF AGENT IS PACMAN
+                    self.train(action, self.state, agentIndex)
 
-            # Change the display
+
             self.display.update( self.state.data )
             ###idx = agentIndex - agentIndex % 2 + 1
             ###self.display.update( self.state.makeObservation(idx).data )
@@ -769,3 +773,78 @@ class Game:
                     self.unmute()
                     return
         self.display.finish()
+
+    def train( self, action, state, agentIndex ):
+        pacman_position = state.getPacmanPosition()
+        grid_start = [pacman_position[0]-2,pacman_position[1]-2]
+        ghost1 = [state.getGhostPosition(1)[0] - grid_start[0], state.getGhostPosition(1)[1] - grid_start[1] ]
+        ghost2 = [state.getGhostPosition(2)[0] - grid_start[0], state.getGhostPosition(2)[1] - grid_start[1] ]
+        food = state.getFood() 
+        capsules = state.getCapsules()
+        walls = state.getWalls()
+        grid = []
+
+
+        for col in range(0,5):
+            grid.append([])
+            for row in range(0,5):
+                if ( (row + grid_start[1]) >= len(walls[0]) ) or ( (col + grid_start[0]) >= 20 ) or ( (row + grid_start[1]) < 0 ) or ( (col + grid_start[0]) <0 ):
+                    grid[col].append('& ')
+                else:
+                    if walls[ col+grid_start[0] ][ row+grid_start[1] ] == True:
+                        grid[col].append('% ')
+                    elif food[ col+grid_start[0] ][ row+grid_start[1] ] == True:
+                        grid[col].append('o ')
+                    else:
+                        grid[col].append('  ')
+
+
+
+        grid[2][2] = '@ '
+        if ghost1[0] < 5 and ghost1[1] < 5 and ghost1[0] > -1 and ghost1[1] > -1:
+            grid[int(ghost1[0])][int(ghost1[1])] = 'X '
+        if ghost2[0] < 5 and ghost2[1] < 5 and ghost2[0] > -1 and ghost2[1] > -1:
+            grid[int(ghost2[0])][int(ghost2[1])] = 'X '
+
+        for i in range(0,len(capsules)):
+            distance = [capsules[i][0] - grid_start[0], capsules[i][1]-grid_start[1] ]
+            if distance[0] < 5 and distance[1] < 5 and distance[0] > -1 and distance[1] > -1:
+                grid[distance[0]][distance[1]] = '0 '
+
+
+        for col in range(4,-1,-1):
+            for row in range(0,5):
+                print(grid[row][col]),
+            print("\n")
+        time.sleep(2)
+
+        input_ = []
+        for col in range(4,-1,-1):
+            for row in range(0,5):
+                input_.append(grid[row][col])
+
+        del input_[12]# we don't need the square pacman is in...
+
+
+        fout1= open('input.txt', 'a+')
+        for item in input_:
+              fout1.write("%s" % item)
+        fout1.write("\n")
+
+        fout2= open("direction.txt","a+")
+        if action == "Stop":
+            fout2.write('.01\n') 
+            print(action)
+        if action == "North":
+            fout2.write('.25\n') 
+            print(action)
+        if action == "East":
+            fout2.write('.5\n') 
+            print(action)
+        if action == "South":
+            fout2.write('.75\n') 
+            print(action)
+        if action == "West":
+            fout2.write('.99\n') 
+            print(action)
+        time.sleep(2)

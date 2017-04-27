@@ -32,11 +32,7 @@ class ANNAgent(Agent):
         ghost2 = [state.getGhostPosition(2)[0] - grid_start[0], state.getGhostPosition(2)[1] - grid_start[1] ]
         food = state.getFood() 
         capsules = state.getCapsules()
-
-        print(pacman_position)
-        print(grid_start)
-
-        walls = state.getWalls();
+        walls = state.getWalls()
         grid = []
 
 
@@ -44,26 +40,27 @@ class ANNAgent(Agent):
             grid.append([])
             for row in range(0,5):
                 if ( (row + grid_start[1]) >= len(walls[0]) ) or ( (col + grid_start[0]) >= 20 ) or ( (row + grid_start[1]) < 0 ) or ( (col + grid_start[0]) <0 ):
-                    grid[col].append('& ')
+                    grid[col].append('&')
                 else:
                     if walls[ col+grid_start[0] ][ row+grid_start[1] ] == True:
-                        grid[col].append('% ')
+                        grid[col].append('%')
                     elif food[ col+grid_start[0] ][ row+grid_start[1] ] == True:
-                        grid[col].append('o ')
+                        grid[col].append('o')
                     else:
-                        grid[col].append('  ')
+                        grid[col].append(' ')
 
 
-        grid[2][2] = '@ '
+
+        grid[2][2] = '@'
         if ghost1[0] < 5 and ghost1[1] < 5 and ghost1[0] > -1 and ghost1[1] > -1:
-            grid[int(ghost1[0])][int(ghost1[1])] = 'X '
+            grid[int(ghost1[0])][int(ghost1[1])] = 'X'
         if ghost2[0] < 5 and ghost2[1] < 5 and ghost2[0] > -1 and ghost2[1] > -1:
-            grid[int(ghost2[0])][int(ghost2[1])] = 'X '
+            grid[int(ghost2[0])][int(ghost2[1])] = 'X'
 
         for i in range(0,len(capsules)):
             distance = [capsules[i][0] - grid_start[0], capsules[i][1]-grid_start[1] ]
             if distance[0] < 5 and distance[1] < 5 and distance[0] > -1 and distance[1] > -1:
-                grid[distance[0]][distance[1]] = '0 '
+                grid[distance[0]][distance[1]] = '0'
 
 
 
@@ -79,7 +76,8 @@ class ANNAgent(Agent):
             for row in range(0,5):
                 print(grid[row][col]),
             print("\n")
-        #time.sleep(1)
+        time.sleep(2)
+        
 
         #for i,a in enumerate(walls):
             #print i, ": ", a
