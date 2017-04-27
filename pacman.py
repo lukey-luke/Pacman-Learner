@@ -636,6 +636,7 @@ def replayGame( layout, actions, display ):
 def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0, catchExceptions=False, timeout=30 ):
     import __main__
     __main__.__dict__['_display'] = display
+    # More or less beginning of code execution
 
     rules = ClassicGameRules(timeout)
     games = []
@@ -651,7 +652,6 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
             gameDisplay = display
             rules.quiet = False
         game = rules.newGame( layout, pacman, ghosts, gameDisplay, beQuiet, catchExceptions)
-        print'Aboutta run dat game ;)'
         game.run()
         if not beQuiet: games.append(game)
 
