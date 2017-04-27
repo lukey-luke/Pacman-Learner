@@ -22,25 +22,26 @@ class Neuron:
         #    self.weights.append( random.uniform(0.1, 1.9) ) # @@@
 
 
+#A good majorify of fxns should just access data[][], as that is where the neurons are stored
 class Ann:
     def __init__(self):
         self.data = [[] for l in range(NUM_OF_LAYERS)] #where the actual ann's neurons go
         self.m_numIterations =0
         self.m_alpha =0
         self.inputs  = []
-        self.encodings = [
+        self.encodings = [#Euclidean distnaces are calculated from these encodings to determine direction
                 {0.1, 0.1, 0.1, 0.9}, #North
                 {0.1, 0.1, 0.9, 0.1}, #East
                 {0.1, 0.9, 0.1, 0.1}, #South
                 {0.9, 0.1, 0.1, 0.1}  #West
                 ]
-        self.directionMapping = [
+        self.directionMapping = [#These are the actual directions of type that Pacman understands
                 Directions.NORTH,
                 Directions.EAST,
                 Directions.SOUTH,
                 Directions.WEST
                 ]
-        self.netStructure = [LENGTH_OF_INPUT, 16, 8, 4, LENGTH_OF_OUTPUT]
+        self.netStructure = [LENGTH_OF_INPUT, 16, 8, 4, LENGTH_OF_OUTPUT]#just used to describe structure
         self.constructNetwork()
         self.score     = -1#last score achieved by this ANN
         self.highScore = -1
@@ -56,7 +57,7 @@ class Ann:
 
                 if i < len(self.netStructure)-1:#create list of wghts corresponding to num neurons in next layer
                     for j in range(0, self.netStructure[i+1]):
-                        weight = random.uniform(-0.9, 1.9)
+                        weight = random.uniform(-0.9, 1.9)# this should be needed
                         tempNeuron.weights.append(weight)
                 #tempNeuron.weights = [0.1] * self.netStructure[i+1]
 
@@ -65,6 +66,7 @@ class Ann:
 
             self.data[i] = tempList#add newly created layer to network
 
+    # Run steps 1, 2, and 3. Return direction for pacman based on provided input
     def processInput(self, listOfInputs):
         self.step1(listOfInputs)
         self.step2and3()
@@ -85,13 +87,6 @@ class Ann:
 
                 self.data[l][j].aVal = 1 / (1 + exp(-1 * in_j))
 
-    #I can't beleive I am spending time here, but this is for sanity checking that net is O.K.
-    def printNetwork(self):
-        for j in range( 0, len(self.data) ):
-            for i in range( 0, len(self.data[j]) ):
-                print 'Neuron in layer ' +j +' node # ' +i +' has following weights: '
-                for k  in self.data[j][i].weights:
-                    print k 
     # Look at output layer and figure out which direction it is saying to go
     # This is bad and just picks the biggest one. It should do euc dist @@@
     def getDirection(self):
