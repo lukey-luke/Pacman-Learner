@@ -1,17 +1,10 @@
 import random
 from math import exp
+from math import sqrt
 from game import Directions
-LENGTH_OF_INPUT  = 24
+LENGTH_OF_INPUT  = 96
 LENGTH_OF_OUTPUT = 4
 NUM_OF_LAYERS    = 5
-
-#Enumish things
-ghost   = 1
-blank   = 2
-wall    = 3
-food    = 4
-capsule = 5
-oob     = 6
 
 class Neuron:
     def __init__(self):
@@ -30,10 +23,10 @@ class Ann:
         self.m_alpha =0
         self.inputs  = []
         self.encodings = [#Euclidean distnaces are calculated from these encodings to determine direction
-                {0.1, 0.1, 0.1, 0.9}, #North
-                {0.1, 0.1, 0.9, 0.1}, #East
-                {0.1, 0.9, 0.1, 0.1}, #South
-                {0.9, 0.1, 0.1, 0.1}  #West
+                    [0.1, 0.1, 0.1, 0.9], #North
+                    [0.1, 0.1, 0.9, 0.1], #East
+                    [0.1, 0.9, 0.1, 0.1], #South
+                    [0.9, 0.1, 0.1, 0.1]  #West
                 ]
         self.directionMapping = [#These are the actual directions of type that Pacman understands
                 Directions.NORTH,
@@ -44,7 +37,7 @@ class Ann:
         self.netStructure = [LENGTH_OF_INPUT, 16, 8, 4, LENGTH_OF_OUTPUT]#just used to describe structure
         self.constructNetwork()
         self.score     = -1#last score achieved by this ANN
-        self.highScore = -1
+        self.highScore = -1#highest score ever achieved by ANN
 
 #This function assigns neurons to elements of the 2d array,
 # ea containing a list of weights initialized to 0.1
@@ -90,15 +83,24 @@ class Ann:
     # Look at output layer and figure out which direction it is saying to go
     # This is bad and just picks the biggest one. It should do euc dist @@@
     def getDirection(self):
-        maxVal = -9999
+        eucDist = 9999
         goThisWay = Directions.LEFT
-        # -1 goes backwards to specify last element in a list
         for j in range( 0, len(self.data[-1]) ): # for ea node in output layer...
-            if self.data[-1][j].aVal > maxVal:
-                maxVal = self.data[-1][j].aVal
+            if self.getEucDist(j) < eucDist:
+                eucDist = self.getEucDist(j)
                 goThisWay = self.directionMapping[j]
         return goThisWay
 
+    # Calculate Euclidean distance for output vector vs an encoding vector
+    # vecNum is a number 0-3 to specify the vector being compared to
+    def getEucDist(self, vecNum):
+        eucDist = 0
+        for j in range( 0, len(self.data[-1]) ): # for ea node in output layer...
+            temp = self.data[-1][j].aVal - self.encodings[vecNum][j]
+            temp = temp**2
+            eucDist += temp
+
+        return sqrt(eucDist)
 
     # Update score and (sometimes) highscore
     def setScore(self, newScore):
