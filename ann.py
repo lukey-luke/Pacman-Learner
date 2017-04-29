@@ -21,6 +21,7 @@ class Ann:
         self.data = [[] for l in range(NUM_OF_LAYERS)] #where the actual ann's neurons go
         self.m_numIterations =0
         self.m_alpha =0
+	self.name = ""
         self.inputs  = []
         self.encodings = [#Euclidean distnaces are calculated from these encodings to determine direction
                     [0.1, 0.1, 0.1, 0.9], #North
@@ -140,6 +141,8 @@ class Ann:
 	            s = "{}".format(self.data[i][k].weights[l])
 		    print "        ----", s, "----> ", nextNode + len(self.data[i]) + conIter
 		    conIter += 1
+	print "------------- end of ANN ------------"
+	print
 
 
     def PrintLayer(self, num):

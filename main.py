@@ -6,8 +6,6 @@ from breeding import Breeding
 loveShack = Breeding()
 lovers = []
 
-print "love you"
-
 for i in range(0, 4):
     lovers.append(Ann())
     lovers[i].giveName("John")
@@ -15,6 +13,11 @@ for i in range(0, 4):
     lovers[i].setScore(score)
     lovers[i].Print()
 
+print
+print "Lets Make Love!!!"
+print
+
 loveShack.getGen(lovers)
+loveShack.getNextGeneration()
 
 

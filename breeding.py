@@ -1,5 +1,6 @@
 from ann import Ann
 import operator
+import random
 from ann import Neuron
 
 MUTATION_CHANCE = .0018382353 # 1 / number of weights in ann
@@ -43,7 +44,7 @@ class Breeding:
          nextGeneration.append(child)
       
       #mutate children for nextGeneration
-      mutateAnns(nextGeneration)
+      self.mutateAnns(nextGeneration)
       self.data = nextGeneration
       for i in range(0, len(self.data)):
          self.data[i].Print()
@@ -82,8 +83,8 @@ class Breeding:
          fittest = 1
          notFit = 0
 
-      for i in len(0, len(mom.data) - 1): #iterate through layers
-         for j in len(0, len(mom.data[i])): #iterate through neurons
+      for i in range(0, len(mom.data) - 1): #iterate through layers
+         for j in range(0, len(mom.data[i])): #iterate through neurons
                chance = random.uniform(0, 1); #which parent to get genne from
                if chance < percent:
                   child.data[i][j] = parents[fittest].data[i][j]
