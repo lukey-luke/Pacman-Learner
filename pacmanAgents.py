@@ -22,8 +22,15 @@ import time
 
 
 
+"An agent that uses an ANN with 5x5 grid around pacman and outputs a direction to go"
 class ANNAgent(Agent):
-    "An agent that uses an ANN with 5x5 grid around pacman and outputs a direction to go"
+    def __init__(self):
+        self.agentAnn = 0
+
+    #Set Ann for agent to use every time it calls get action
+    #annFromMain is the Ann() passed down by main
+    def setAnn(self, annFromMain):
+        self.agentAnn = annFromMain
 
     def getGrid(self, state): 
         #Function that parses through the state to extract:

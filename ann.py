@@ -2,9 +2,9 @@ import random
 from math import exp
 from math import sqrt
 from game import Directions
-LENGTH_OF_INPUT  = 2 #96
-LENGTH_OF_OUTPUT = 2 #4
-NUM_OF_LAYERS    = 3 #5
+LENGTH_OF_INPUT  = 96
+LENGTH_OF_OUTPUT = 4
+NUM_OF_LAYERS    = 5
 
 class Neuron:
     def __init__(self):
@@ -34,8 +34,8 @@ class Ann:
                 Directions.SOUTH,
                 Directions.WEST
                 ]
-        self.netStructure = [LENGTH_OF_INPUT, 3, LENGTH_OF_OUTPUT]#just used to describe structure
-        #self.netStructure = [LENGTH_OF_INPUT, 16, 8, 4, LENGTH_OF_OUTPUT]#just used to describe structure
+        #Tru's nonsense: self.netStructure = [LENGTH_OF_INPUT, 3, LENGTH_OF_OUTPUT]#just used to describe structure
+        self.netStructure = [LENGTH_OF_INPUT, 16, 8, 4, LENGTH_OF_OUTPUT]#just used to describe structure
         self.constructNetwork()
         self.score     = -1#last score achieved by this ANN
         self.highScore = -1#highest score ever achieved by ANN
