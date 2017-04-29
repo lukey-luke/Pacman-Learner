@@ -16,7 +16,13 @@ class Breeding:
  
     def initialize(self):
         chrisMartinez = Ann()
-        chrisMartinez.trainShit()
+        #chrisMartinez.Print()
+        chrisMartinez.PrintLayer(3)
+        for i in range(0, 69):
+            chrisMartinez.trainShit()
+
+        #chrisMartinez.Print()
+        chrisMartinez.PrintLayer(3)
         
         self.data[0] = chrisMartinez
         for i in range(1, ANN_COUNT):

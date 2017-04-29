@@ -5,11 +5,12 @@ from game import Directions
 LENGTH_OF_INPUT  = 96
 LENGTH_OF_OUTPUT = 4
 NUM_OF_LAYERS    = 5
+ALPHA_VALUE      = 0.01
 
 class Neuron:
     def __init__(self):
         self.aVal    = 0
-        #self.delta   = 0
+        self.delta   = 0
         self.weights = []
         #for i in range(0, LENGTH_OF_OUTPUT)):# right when we have a neuron, give it 4 rand wghts
         #    self.weights.append( random.uniform(0.1, 1.9) ) # @@@
@@ -102,16 +103,16 @@ class Ann:
     # yVec is the vector of expected outputs - currently a placeholder until we know where this will be stored @@@
     def step4(self, yVec):
         for i in range(1,len(self.data[-1])):# For ea node in output layer...
-            data[-1][i].delta = self.data[-1][i] * (1 - self.data[-1][i]) * (yVec[i] - self.data[-1][i])
+            self.data[-1][i].delta = self.data[-1][i].aVal * (1 - self.data[-1][i].aVal) * (yVec[i] - self.data[-1][i].aVal)
 
     # Only used for trainig
     # Calculate nodes' error for ea layer except the output layer
     def step5and6(self):
-        for l in range(0, len(self.data)):
+        for l in range(0, len(self.data)-1):
             for n in range(0, len(self.data[l])):
                 newDeltaVal = self.data[l][n].aVal * (1 - self.data[l][n].aVal)
                 for w in range(0, len(self.data[l][n].weights)):
-                    newDeltaVal += (self.data[l][n].weights[w] * self.data[l+1][n].delta)
+                    newDeltaVal += (self.data[l][n].weights[w] * self.data[l+1][w].delta)
 
                 self.data[l][n].delta = newDeltaVal
 
@@ -119,8 +120,8 @@ class Ann:
     # Recaluclate weights based on error (delta values)
     def step7(self):
         for l in range(0, len(self.data)):
-            for n in range(0, self.data[l]):
-                for w in range(0, self.data[l][n].weights):
+            for n in range(0, len(self.data[l])):
+                for w in range(0, len(self.data[l][n].weights)):
                     newWeight = self.data[l][n].weights[w]
                     newWeight += (ALPHA_VALUE * self.data[l][n].aVal * self.data[l+1][w].delta)
 
@@ -168,35 +169,68 @@ class Ann:
 
     # use Chris' training data and run throug steps 1-7
     def trainShit( self ):
-        with open("won1_input.txt", "r") as finInput:
-            inputArr = [line for line in finInput]
+        #with open("won1_input.txt", "r") as finInput:
+        #    inputArr = [line for line in finInput]
 
-        newInputArr = []
-        for line in inputArr:
-            newLine = []
-            for i in range(0, len(line)):
-                c = line[i]
-                c += '.0'
-                newLine.append(float(c))
-            newInputArr.append(newLine)
+        #newInputArr = []
+        #for line in inputArr:
+        #    newLine = []
+        #    for i in range(0, len(line)):
+        #        c = line[i]
+        #        c += '.0'
+        #        newLine.append(float(c))
+        #    newInputArr.append(newLine)
 
 
-        with open("won1_labels.txt", "r") as finLabels:
-            labelArr = [line.split() for line in finLabels]
-        newLabelArr = []
-        for line in labelArr:
-            newLine = []
-            for thingy in line:
-                newLine.append(float(thingy))
-            newLabelArr.append(newLine)
+        #with open("won1_labels.txt", "r") as finLabels:
+        #    labelArr = [line.split() for line in finLabels]
+        #newLabelArr = []
+        #for line in labelArr:
+        #    newLine = []
+        #    for thingy in line:
+        #        newLine.append(float(thingy))
+        #    newLabelArr.append(newLine)
 
-        print newInputArr
-        print newLabelArr
+        #print newInputArr
+        #print newLabelArr
+        '''
+        000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+        '''
+        nes = open("won1_input.txt").read().splitlines()
+        
+        newInputData = []
+        for i in range(0, len(nes)):
+            newInputData.append([])
+            for j in range(0, len(nes[0])):
+                newInputData[i].append(int (nes[i][j]))
+        
+        """
+        for i in range(0, len(newInputData)):
+            for j in range(0, len(newInputData[0])):
+                #print newInputData[i][j],
+            print '\n'
+        """
+        
+        
+        lines = [line.rstrip('\n') for line in open('won1_labels.txt')]
+        labels = []
+        for line in lines:
+            line = line.strip().split(' ')
+            labels.append(line)
+        newOuputData = []
+        for line in lines:
+            number_strings = line.split() # Split the line on runs of whitespace
+            numbers = [float(n) for n in number_strings] # Convert to integers
+            newOuputData.append(numbers) # Add the "row" to your list.
+        #print(newOuputData) # [[1, 3, 4], [5, 5, 6]]
+        '''
+        000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+        '''
 
-        for arrNum in range(0, len(newInputArr)):
-            self.step1(newInputArr[arrNum])
+        for arrNum in range(0, len(newInputData)):
+            self.step1(newInputData[arrNum])
             self.step2and3()
-            self.step4(newLabelArr[arrNum])
+            self.step4(newOuputData[arrNum])
             self.step5and6()
             self.step7()
 
