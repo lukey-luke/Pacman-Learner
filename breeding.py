@@ -1,10 +1,10 @@
 from ann import Ann
+from ann import *
 import operator
 from ann import Neuron
 
-MUTATION_CHANCE = .0018382353 # 1 / number of weights in ann
 MUTATION_SCALAR = 5 # weight + weight* or weight/MUTATION_SCALAR
-ANN_COUNT = 4 # ANNs we'll store 
+ANN_COUNT = 16 # ANNs we'll store 
 
 class Breeding:
    def __init__(self):
@@ -22,9 +22,6 @@ class Breeding:
       for i in range(0, len(data)):
          if self.data[i].highScore > self.highScoreOfAnns:
             self.highScoreOfAnns = self.data[i].highScore
-   
-   def getGen(self, newAnns):
-	self.data = newAnns
 
    def getNextGeneration(self):
       sorted_ = sorted(self.data, key=operator.attrgetter('highScore'), reverse=True)
@@ -33,6 +30,14 @@ class Breeding:
       for i in range(0, len(sorted_)/2):
          nextGeneration.append(sorted_[i])
 
+
+
+
+                newDeltaVal = self.data[l][n].aVal * (1 - self.data[l][n].aVal)
+                for w in range(0, len(self.data[l][n].weights)):
+                    newDeltaVal += (self.data[l][n].weights[w] * self.data[l+1][n].delta)
+
+                self.data[l][n].delta = newDeltaVal
       #add 1 child bred from fittest parents
       child = self.annBreeding(nextGeneration[0], nextGeneration[1])
       nextGeneration.append(child)
@@ -42,15 +47,24 @@ class Breeding:
          child = self.annBreeding(nextGeneration[i], nextGeneration[i+1])
          nextGeneration.append(child)
       
+      #mutateAnns(nextGeneration)
       #mutate children for nextGeneration
-      mutateAnns(nextGeneration)
+      for i in range(len(nextGeneration)/2, len(nextGeneration)):
+         self.mutateAnn(nextGeneration[i])
       self.data = nextGeneration
-      for i in range(0, len(self.data)):
-         self.data[i].Print()
 
    
-   def mutateAnns(self, nextGen):
-      #mutate children
+   def mutateAnn(self, nextGen):
+      layer = randint(0, NUM_OF_LAYERS) #choose layer from nextGen ANN
+      neuron = randint(0, len(nextGen.data[layer])) #choose neuron from that layer
+      weight = randint(0, len(nextGen.data[layer][neuron].weights)) #choose weight from that neuron
+      plusOrMinus = random.uniform(0, 1)
+      if plusOrMinus > .5:
+         nextGen.data[layer][neuron].weight[weight] += nextGen.data[layer][neuron].weight[weight]/MUTATION_SCALAR
+      else:
+         nextGen.data[layer][neuron].weight[weight] -= nextGen.data[layer][neuron].weight[weight]/MUTATION_SCALAR
+
+      """
       for i in range(len(nextGen)/2, len(nextGen)): #iterate through ANNs
          for j in range(0, len(nextGen[i].data)): #iterate through layers of ANN
             for k in range(0, len(nextGen[i].data[j])): #iterate through neurons in layer
@@ -63,6 +77,7 @@ class Breeding:
                           nextGen[i].data[j][k].weights[l] += nextGen[i].data[j][k].weights[l]/MUTATION_SCALAR
                         else:
                           nextGen[i].data[j][k].weights[l] -= nextGen[i].data[j][k].weights[l]/MUTATION_SCALAR
+      """
 
 
    def annBreeding(self, mom, dad):
