@@ -35,7 +35,6 @@ class Ann:
                 Directions.SOUTH,
                 Directions.WEST
                 ]
-        #Tru's nonsense: self.netStructure = [LENGTH_OF_INPUT, 3, LENGTH_OF_OUTPUT]#just used to describe structure
         self.netStructure = [LENGTH_OF_INPUT, 16, 8, 4, LENGTH_OF_OUTPUT]#just used to describe structure
         self.constructNetwork()
         self.score     = -1#last score achieved by this ANN
