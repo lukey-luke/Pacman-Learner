@@ -46,8 +46,8 @@ class Ann:
                 ]
         self.netStructure = [LENGTH_OF_INPUT, 16, 8, 4, LENGTH_OF_OUTPUT]#just used to describe structure
         self.constructNetwork()
-        self.score     = -1#last score achieved by this ANN
-        self.highScore = -1#highest score ever achieved by ANN
+        self.score     = -9999#last score achieved by this ANN
+        self.highScore = -9999#highest score ever achieved by ANN
 
     #This function assigns neurons to elements of the 2d array,
     # ea containing a list of weights initialized to 0.1

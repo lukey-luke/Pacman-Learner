@@ -18,7 +18,7 @@ class Breeding:
         chrisMartinez = Ann()
         #chrisMartinez.Print()
         chrisMartinez.PrintLayer(3)
-        for i in range(0, 69):
+        for i in range(0, 9):
             chrisMartinez.trainShit()
 
         #chrisMartinez.Print()
@@ -38,7 +38,7 @@ class Breeding:
        self.avgScoreOfAnns = avg/len(self.data)
  
     def updateHighScore(self):
-       for i in range(0, len(data)):
+       for i in range(0, len(self.data)):
           if self.data[i].highScore > self.highScoreOfAnns:
              self.highScoreOfAnns = self.data[i].highScore
     
@@ -69,6 +69,9 @@ class Breeding:
        for i in range(0, len(babies)):
           nextGeneration.append(babies[i])
        
+       self.updateHighScore()
+       self.updateAvgScore()
+
        #saving the generation
        self.data = nextGeneration
     
@@ -87,6 +90,7 @@ class Breeding:
        child = Ann() 
        momScore = mom.highScore
        dadScore = dad.highScore
+       print "momScore: ", momScore, " and dadScore: ", dadScore
        total = momScore + dadScore
        parents = [mom, dad] #parents in array for easier indexing
  

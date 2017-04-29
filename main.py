@@ -1,16 +1,12 @@
+#For testing purposes only
 from ann import Ann
 from breeding import *
 import random
 import operator
 
 loveShack = Breeding()
-lovers = []
+loveShack.initialize()
+for ann in loveShack.data:
+    ann.setScore(randint(0, 900))
 
-for i in range(0, ANN_COUNT):
-    lovers.append(Ann())
-    lovers[i].giveName("Tina")
-    score = random.uniform(0, 500)
-    lovers[i].setScore(score)
-
-loveShack.setGen(lovers)
 loveShack.getNextGeneration()
