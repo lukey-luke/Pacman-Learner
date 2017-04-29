@@ -671,8 +671,8 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
         scores = [game.state.getScore() for game in games]
         wins = [game.state.isWin() for game in games]
         winRate = wins.count(True)/ float(len(wins))
-        #print 'Average Score:', sum(scores) / float(len(scores))
         print 'Scores:       ', ', '.join([str(score) for score in scores])
+        #print 'Average Score:', sum(scores) / float(len(scores))
         #print 'Win Rate:      %d/%d (%.2f)' % (wins.count(True), len(wins), winRate)
         #print 'Record:       ', ', '.join([ ['Loss', 'Win'][int(w)] for w in wins])
         #print 'Get rekt n00b.'
@@ -702,9 +702,8 @@ if __name__ == '__main__':
         breeder.initialize()#Creates and populates NUM_OF_ANNS Ann()s with starting data (Chris' training data)
         for gen in range(0, NUM_GENERATIONS):
             print 'On generation: ', gen
-            i = 0
             for currAnn in breeder.data:
-                print 'Ann #: ', i
+                print currAnn
                 # run game
                 args['pacman'].setAnn(currAnn)#set ann from the pool
                 score = runGames( **args )    #run the game
@@ -712,7 +711,6 @@ if __name__ == '__main__':
                 # update score
                 currAnn.setScore(score)
                 currAnn.printScore()
-                i +=1
             # stuff b/w generations
             breeder.getNextGeneration()
 

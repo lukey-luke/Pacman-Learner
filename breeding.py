@@ -4,6 +4,7 @@ import operator
 import random
 from random import randint
 from ann import Neuron
+import copy
 
 MUTATION_SCALAR = 5 # weight + weight* or weight/MUTATION_SCALAR
 ANN_COUNT = 16 # ANNs we'll store 
@@ -26,7 +27,8 @@ class Breeding:
         
         self.data[0] = chrisMartinez
         for i in range(1, ANN_COUNT):
-            temp = chrisMartinez
+            temp = copy.copy(chrisMartinez) 
+            #temp = chrisMartinez.copy()
             self.mutateAnn(temp)
             self.data[i] = temp
 
