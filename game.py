@@ -579,35 +579,6 @@ class Game:
         self.display.initialize(self.state.data)
         self.numMoves = 0
 
-        """
-        print ''
-        print '###################################' # @@@
-        something = self.state.getPacmanState
-        print 'Legal pacman actions:'
-        print self.state.getLegalPacmanActions()
-
-        print 'Pacman position at: '
-        something2 = self.state.getPacmanPosition()
-        print something2
-
-        print 'Capsule positions'
-        something3 = self.state.getCapsules()
-        for i,a in enumerate(something3):
-                print i, ": ", a
-        print 'Walls'
-        something4 = self.state.getWalls()
-        for i,a in enumerate(something4):
-                print i, ": ", a
-#        for j in something4:
-#            for i in something4[j]:
-#                if something4[j][i]:
-#                    print'yes'
-#                else:
-#                    print'no'
-        #print 'Ghost positions: '
-                    
-            #print something4[j][0]
-        """
 
         ###self.display.initialize(self.state.makeObservation(1).data)
         # inform learning agents of the game start
@@ -768,6 +739,7 @@ class Game:
                     self.unmute()
                     return
         self.display.finish()
+        return self.state.getScore()
 
 
 
