@@ -17,14 +17,6 @@ class Neuron:
 
 #A good majorify of fxns should just access data[][], as that is where the neurons are stored
 class Ann:
-    """
-    .___       .__.__  __  .__       .__  .__                __  .__
-    |   | ____ |__|__|/  |_|__|____  |  | |__|____________ _/  |_|__| ____   ____
-    |   |/    \|  |  \   __\  \__  \ |  | |  \___   /\__  \\   __\  |/  _ \ /    \
-    |   |   |  \  |  ||  | |  |/ __ \|  |_|  |/    /  / __ \|  | |  (  <_> )   |  \
-    |___|___|  /__|__||__| |__(____  /____/__/_____ \(____  /__| |__|\____/|___|  /
-             \/                    \/              \/     \/                    \/
-    """
     def __init__(self):
         self.data = [[] for l in range(NUM_OF_LAYERS)] #where the actual ann's neurons go
         self.m_numIterations =0
@@ -32,10 +24,10 @@ class Ann:
 	self.name = ""
         self.inputs  = []
         self.encodings = [#Euclidean distnaces are calculated from these encodings to determine direction
-                    [0.9, 0.1, 0.1, 0.1], #North
-                    [0.1, 0.9, 0.1, 0.1], #East
-                    [0.1, 0.1, 0.9, 0.1], #South
-                    [0.1, 0.1, 0.1, 0.9]  #West
+                    [0.1, 0.1, 0.1, 0.9], #North
+                    [0.1, 0.1, 0.9, 0.1], #East
+                    [0.1, 0.9, 0.1, 0.1], #South
+                    [0.9, 0.1, 0.1, 0.1]  #West
                 ]
         self.directionMapping = [#These are the actual directions of type that Pacman understands
                 Directions.NORTH,
@@ -43,13 +35,14 @@ class Ann:
                 Directions.SOUTH,
                 Directions.WEST
                 ]
+        #Tru's nonsense: self.netStructure = [LENGTH_OF_INPUT, 3, LENGTH_OF_OUTPUT]#just used to describe structure
         self.netStructure = [LENGTH_OF_INPUT, 16, 8, 4, LENGTH_OF_OUTPUT]#just used to describe structure
         self.constructNetwork()
         self.score     = -1#last score achieved by this ANN
         self.highScore = -1#highest score ever achieved by ANN
 
-    #This function assigns neurons to elements of the 2d array,
-    # ea containing a list of weights initialized to 0.1
+#This function assigns neurons to elements of the 2d array,
+# ea containing a list of weights initialized to 0.1
     def constructNetwork(self):
         for i in range( 0, len(self.netStructure) ):# for layer i out of all layers
             tempList = []
@@ -59,7 +52,7 @@ class Ann:
 
                 if i < len(self.netStructure)-1:#create list of wghts corresponding to num neurons in next layer
                     for j in range(0, self.netStructure[i+1]):
-                        weight = random.uniform(-0.5, 0.5)# this should be needed
+                        weight = random.uniform(-0.9, 1.9)# this should be needed
                         tempNeuron.weights.append(weight)
                 #tempNeuron.weights = [0.1] * self.netStructure[i+1]
 
@@ -74,14 +67,6 @@ class Ann:
         self.step2and3()
         return self.getDirection()
 
-    """
-     _______          __                       __       _________ __
-     \      \   _____/  |___  _  _____________|  | __  /   _____//  |_  ____ ______  ______
-     /   |   \_/ __ \   __\ \/ \/ /  _ \_  __ \  |/ /  \_____  \\   __\/ __ \\____ \/  ___/
-    /    |    \  ___/|  |  \     (  <_> )  | \/    <   /        \|  | \  ___/|  |_> >___ \
-    \____|__  /\___  >__|   \/\_/ \____/|__|  |__|_ \ /_______  /|__|  \___  >   __/____  >
-            \/     \/                              \/         \/           \/|__|       \/
-    """
     # Iterate through input layer a_j = x_j
     def step1(self, listOfInputs):
         for i in range( 0, len(listOfInputs) ):
@@ -97,43 +82,6 @@ class Ann:
 
                 self.data[l][j].aVal = 1 / (1 + exp(-1 * in_j))
 
-    # Only used for trainig
-    # Calculate error for ea node in output layer
-    # yVec is the vector of expected outputs - currently a placeholder until we know where this will be stored @@@
-    def step4(self, yVec):
-        for i in range(1,len(self.data[-1])):# For ea node in output layer...
-            data[-1][i].delta = self.data[-1][i] * (1 - self.data[-1][i]) * (yVec[i] - self.data[-1][i])
-
-    # Only used for trainig
-    # Calculate nodes' error for ea layer except the output layer
-    def step5and6(self):
-        for l in range(0, len(self.data)):
-            for n in range(0, len(self.data[l])):
-                newDeltaVal = self.data[l][n].aVal * (1 - self.data[l][n].aVal)
-                for w in range(0, len(self.data[l][n].weights)):
-                    newDeltaVal += (self.data[l][n].weights[w] * self.data[l+1][n].delta)
-
-                self.data[l][n].delta = newDeltaVal
-
-    # Only used for trainig
-    # Recaluclate weights based on error (delta values)
-    def step7(self):
-        for l in range(0, len(self.data)):
-            for n in range(0, self.data[l]):
-                for w in range(0, self.data[l][n].weights):
-                    newWeight = self.data[l][n].weights[w]
-                    newWeight += (ALPHA_VALUE * self.data[l][n].aVal * self.data[l+1][w].delta)
-
-                    self.data[l][n].weights[w] = newWeight
-
-    """
-       _____ __________.___
-      /  _  \\______   \   |
-     /  /_\  \|     ___/   |
-    /    |    \    |   |   |
-    \____|__  /____|   |___|
-            \/
-    """
     # Look at output layer and figure out which direction it is saying to go
     # This is bad and just picks the biggest one. It should do euc dist @@@
     def getDirection(self):
@@ -162,59 +110,9 @@ class Ann:
         if newScore > self.highScore:
             self.highScore = newScore
 
-    # assign a name to the ann
     def giveName(self, n):
 	self.name = n
 
-    # use Chris' training data and run throug steps 1-7
-    def trainShit( self ):
-        with open("won1_input.txt", "r") as finInput:
-            inputArr = [line for line in finInput]
-
-        newInputArr = []
-        for line in inputArr:
-            newLine = []
-            for i in range(0, len(line)):
-                c = line[i]
-                c += '.0'
-                newLine.append(float(c))
-            newInputArr.append(newLine)
-
-
-        with open("won1_labels.txt", "r") as finLabels:
-            labelArr = [line.split() for line in finLabels]
-        newLabelArr = []
-        for line in labelArr:
-            newLine = []
-            for thingy in line:
-                newLine.append(float(thingy))
-            newLabelArr.append(newLine)
-
-        print newInputArr
-        print newLabelArr
-
-        for arrNum in range(0, len(newInputArr)):
-            self.step1(newInputArr[arrNum])
-            self.step2and3()
-            self.step4(newLabelArr[arrNum])
-            self.step5and6()
-            self.step7()
-
-        #for i in range(0,len(inputData)):
-        #    print inputData[i]
-
-        #print inputData
-        #print labelData
-        
-
-    """
-    __________        .__        __    ___________
-    \______   \_______|__| _____/  |_  \_   _____/__  ___ ____   ______
-     |     ___/\_  __ \  |/    \   __\  |    __) \  \/  //    \ /  ___/
-     |    |     |  | \/  |   |  \  |    |     \   >    <|   |  \\___ \
-     |____|     |__|  |__|___|  /__|    \___  /  /__/\_ \___|  /____  >
-                              \/            \/         \/    \/     \/
-    """
     def Print(self):
 	print 
 	print self.name, " ", self.highScore

@@ -4,7 +4,6 @@ import operator
 import random
 from random import randint
 from ann import Neuron
-from chris import trainingData
 
 MUTATION_SCALAR = 5 # weight + weight* or weight/MUTATION_SCALAR
 ANN_COUNT = 16 # ANNs we'll store 
@@ -25,8 +24,6 @@ class Breeding:
             self.mutateAnn(temp)
             self.data[i] = temp
 
-
-        
 
     def updateAvgScore(self):
        avg = 0
