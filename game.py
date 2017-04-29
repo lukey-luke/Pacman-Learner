@@ -841,17 +841,11 @@ class Game:
         fout2= open("direction.txt","a+")
         if action == "Stop":
             fout2.write('stopped \n') 
-            print(action)
         if action == "North":
             fout2.write('.9 .1 .1 .1 \n') 
-            print(action)
         if action == "East":
             fout2.write('.1 .9 .1 .1 \n') 
-            print(action)
         if action == "South":
             fout2.write('.1 .1 .9 .1 \n') 
-            print(action)
         if action == "West":
             fout2.write('.1 .1 .1 .9 \n') 
-            print(action)
-        time.sleep(5)
