@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 NUM_GENERATIONS = 4
 # pacman.py
 # ---------
@@ -698,7 +699,7 @@ if __name__ == '__main__':
     if sys.argv[2:3] == ['ANNAgent']:
         print'Using Ann'
         breeder = Breeding()
-        breeder.initiliate()#Creates and populates NUM_OF_ANNS Ann()s with starting data (Chris' training data)
+        breeder.initialize()#Creates and populates NUM_OF_ANNS Ann()s with starting data (Chris' training data)
         for gen in range(0, NUM_GENERATIONS):
             for currAnn in range(0, len(breeder.data)):
                 # run game
