@@ -24,10 +24,10 @@ class Ann:
 	self.name = ""
         self.inputs  = []
         self.encodings = [#Euclidean distnaces are calculated from these encodings to determine direction
-                    [0.1, 0.1, 0.1, 0.9], #North
-                    [0.1, 0.1, 0.9, 0.1], #East
-                    [0.1, 0.9, 0.1, 0.1], #South
-                    [0.9, 0.1, 0.1, 0.1]  #West
+                    [0.9, 0.1, 0.1, 0.1], #North
+                    [0.1, 0.9, 0.1, 0.1], #East
+                    [0.1, 0.1, 0.9, 0.1], #South
+                    [0.1, 0.1, 0.1, 0.9]  #West
                 ]
         self.directionMapping = [#These are the actual directions of type that Pacman understands
                 Directions.NORTH,
