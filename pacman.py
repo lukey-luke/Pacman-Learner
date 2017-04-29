@@ -1,3 +1,4 @@
+NUM_GENERATIONS = 4
 # pacman.py
 # ---------
 # Licensing Information:  You are free to use or extend these projects for
@@ -45,6 +46,7 @@ from game import Directions
 from game import Actions
 from util import nearestPoint
 from util import manhattanDistance
+from breeding import Breeding
 import util, layout
 import sys, types, time, random, os
 
@@ -651,6 +653,7 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
         else:
             gameDisplay = display
             rules.quiet = False
+        # SPECIFY ANN for our pacman, IF he is an ANNAGENT
         game = rules.newGame( layout, pacman, ghosts, gameDisplay, beQuiet, catchExceptions)
         game.run()
         if not beQuiet: games.append(game)
@@ -687,10 +690,39 @@ if __name__ == '__main__':
     > python pacman.py --help
     """
     args = readCommand( sys.argv[1:] ) # Get game components based on input
-    #This is where we must iterate over @@@
-    #for ...
-    score = runGames( **args )
-    print score
+    print (sys.argv[1:])
+    print (sys.argv[2:3])
+    print 'hi'
+    print args['pacman']
+    print 'hi'
+    if sys.argv[2:3] == ['ANNAgent']:
+        print'Using Ann'
+        breeder = Breeding()
+        breeder.initiliate()#Creates and populates NUM_OF_ANNS Ann()s with starting data (Chris' training data)
+        for gen in range(0, NUM_GENERATIONS):
+            for currAnn in range(0, len(breeder.data)):
+                # run game
+                args['pacman'].setAnn(currAnn)
+                score = runGames( **args )
+                # update score
+                currAnn.setScore(score)
+                currAnn.printScore()
+
+
+        """
+            if WE_HAVE_ANN_AGENT:
+                poolOfAnns = breeder.data
+                #for NUMBER_OF_GENERATIONS
+                #for ann in ANN_POOL_SIZE
+                    score = runGames( **args )
+                print score
+            else:
+                runGames
+        """
+        
+    else:
+        print'Continue as normal'
+        runGames( **args )
 
 
     # import cProfile
