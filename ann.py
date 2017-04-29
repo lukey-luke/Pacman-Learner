@@ -188,6 +188,11 @@ class Ann:
 		    print "        ----", s, "----> ", nodeCount + len(self.data[lNum]) + conIter
 		    conIter += 1
 
+    # prints score data for ANN to STDOUT
+    def printScore(self):
+        print 'Most recent score: ', self.score
+        print 'Highest score: ', self.highScore
+
 
 """
 This is some dummy sample code used to test ANN.
