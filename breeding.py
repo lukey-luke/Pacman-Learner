@@ -1,6 +1,7 @@
 from ann import Ann
 from ann import *
 import operator
+import random
 from ann import Neuron
 
 MUTATION_SCALAR = 5 # weight + weight* or weight/MUTATION_SCALAR
@@ -97,8 +98,8 @@ class Breeding:
          fittest = 1
          notFit = 0
 
-      for i in len(0, len(mom.data) - 1): #iterate through layers
-         for j in len(0, len(mom.data[i])): #iterate through neurons
+      for i in range(0, len(mom.data) - 1): #iterate through layers
+         for j in range(0, len(mom.data[i])): #iterate through neurons
                chance = random.uniform(0, 1); #which parent to get genne from
                if chance < percent:
                   child.data[i][j] = parents[fittest].data[i][j]
