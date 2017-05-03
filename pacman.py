@@ -1,5 +1,7 @@
 #!/usr/bin/env python
-NUM_GENERATIONS = 200
+NUM_GENERATIONS = 50
+GENERATION_NAME = 'tom'
+FILE_TO_BE_LOADED = 'saves/sally/_gen25_ann18.txt'
 # pacman.py
 # ---------
 # Licensing Information:  You are free to use or extend these projects for
@@ -41,6 +43,7 @@ code to run a game.  This file is divided into three sections:
 To play your first game, type 'python pacman.py' from the command line.
 The keys are 'a', 's', 'd', and 'w' to move (or arrow keys).  Have fun!
 """
+from ann import Ann # needed for when loading from file
 from game import GameStateData
 from game import Game
 from game import Directions
@@ -301,7 +304,7 @@ class ClassicGameRules:
         game.gameOver = True
 
     def lose( self, state, game ):
-        if not self.quiet: print "Pacman died! Score: %d" % state.data.score
+        #if not self.quiet: print "Pacman died! Score: %d" % state.data.score
         game.gameOver = True
 
     def getProgress(self, game):
@@ -671,7 +674,7 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
         scores = [game.state.getScore() for game in games]
         wins = [game.state.isWin() for game in games]
         winRate = wins.count(True)/ float(len(wins))
-        print 'Scores:       ', ', '.join([str(score) for score in scores])
+        #print 'Scores:       ', ', '.join([str(score) for score in scores])
         #print 'Average Score:', sum(scores) / float(len(scores))
         #print 'Win Rate:      %d/%d (%.2f)' % (wins.count(True), len(wins), winRate)
         #print 'Record:       ', ', '.join([ ['Loss', 'Win'][int(w)] for w in wins])
@@ -693,15 +696,18 @@ if __name__ == '__main__':
     args = readCommand( sys.argv[1:] ) # Get game components based on input
     print (sys.argv[1:])
     print (sys.argv[2:3])
-    print 'hi'
     print args['pacman']
-    print 'hi'
     if sys.argv[2:3] == ['ANNAgent']:
         print'Using Ann'
         breeder = Breeding()
         breeder.initialize()#Creates and populates NUM_OF_ANNS Ann()s with starting data (Chris' training data)
+
+        if not os.path.exists('saves/' +GENERATION_NAME):
+            os.makedirs('saves/' +GENERATION_NAME)
+
         for gen in range(0, NUM_GENERATIONS):
-            print 'On generation: ', gen
+            print '---------------- On generation: ', gen, ' ----------------'
+            i = 0
             for currAnn in breeder.data:
                 # This is used to ensure we have different instance #'s for the breeder's anns
                 #print currAnn
@@ -712,7 +718,10 @@ if __name__ == '__main__':
                 print score
                 # update score
                 currAnn.setScore(score)
-                currAnn.printScore()
+                currAnn.giveName( (GENERATION_NAME +'/_gen' +str(gen) +'_ann' +str(i)) )#create new filename
+                currAnn.saveFile()
+                #currAnn.printScore()
+                i += 1
             # stuff b/w generations
             breeder.getNextGeneration()
 
@@ -728,6 +737,12 @@ if __name__ == '__main__':
                 runGames
         """
         
+    elif sys.argv[2:3] == ['LoaderAgent']:
+        print'Using file: ' +FILE_TO_BE_LOADED
+        temp = Ann()
+        temp.loadFile(FILE_TO_BE_LOADED)
+        args['pacman'].setAnn(temp)#set ann to the one gotten from .txt file
+        runGames( **args )
     else:
         print'Continue as normal'
         runGames( **args )
