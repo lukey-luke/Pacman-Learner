@@ -107,8 +107,17 @@ class ANNAgent(Agent):
 
         #1d array to pass as input to ANN
 
-        myAnn = Ann()
-        predictedDirection = myAnn.processInput(input_grid)
+        predictedDirection = self.agentAnn.processInput(input_grid)
+        if predictedDirection == Directions.NORTH:
+            print'Direction: North'
+        elif predictedDirection == Directions.EAST:
+            print'Direction: East'
+        elif predictedDirection == Directions.SOUTH:
+            print'Direction: South'
+        elif predictedDirection == Directions.WEST:
+            print'Direction: West'
+        else:
+            print'Direction unknown!?'
         #legal = state.getLegalPacmanActions()
 
         #if predictedDirection in state.getLegalPacmanActions():
@@ -116,6 +125,7 @@ class ANNAgent(Agent):
             #return predictedDirection
             return predictedDirection
         else:
+            print'invalid... stopping'
             return Directions.STOP
 
         #for col in range(4,-1,-1):

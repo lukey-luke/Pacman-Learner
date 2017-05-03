@@ -169,33 +169,6 @@ class Ann:
 
     # use Chris' training data and run throug steps 1-7
     def trainShit( self ):
-        #with open("won1_input.txt", "r") as finInput:
-        #    inputArr = [line for line in finInput]
-
-        #newInputArr = []
-        #for line in inputArr:
-        #    newLine = []
-        #    for i in range(0, len(line)):
-        #        c = line[i]
-        #        c += '.0'
-        #        newLine.append(float(c))
-        #    newInputArr.append(newLine)
-
-
-        #with open("won1_labels.txt", "r") as finLabels:
-        #    labelArr = [line.split() for line in finLabels]
-        #newLabelArr = []
-        #for line in labelArr:
-        #    newLine = []
-        #    for thingy in line:
-        #        newLine.append(float(thingy))
-        #    newLabelArr.append(newLine)
-
-        #print newInputArr
-        #print newLabelArr
-        '''
-        000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-        '''
         nes = open("won1_input.txt").read().splitlines()
         
         newInputData = []
@@ -204,12 +177,6 @@ class Ann:
             for j in range(0, len(nes[0])):
                 newInputData[i].append(int (nes[i][j]))
         
-        """
-        for i in range(0, len(newInputData)):
-            for j in range(0, len(newInputData[0])):
-                #print newInputData[i][j],
-            print '\n'
-        """
         
         
         lines = [line.rstrip('\n') for line in open('won1_labels.txt')]
@@ -222,10 +189,6 @@ class Ann:
             number_strings = line.split() # Split the line on runs of whitespace
             numbers = [float(n) for n in number_strings] # Convert to integers
             newOuputData.append(numbers) # Add the "row" to your list.
-        #print(newOuputData) # [[1, 3, 4], [5, 5, 6]]
-        '''
-        000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-        '''
 
         for arrNum in range(0, len(newInputData)):
             self.step1(newInputData[arrNum])
@@ -234,11 +197,6 @@ class Ann:
             self.step5and6()
             self.step7()
 
-        #for i in range(0,len(inputData)):
-        #    print inputData[i]
-
-        #print inputData
-        #print labelData
         
 
     """
