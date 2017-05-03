@@ -65,6 +65,7 @@ class Breeding:
 
         #add 1 child bred from fittest parents
         child = self.annBreeding(nextGeneration[0], nextGeneration[1])
+        print "Highest Score: ", nextGeneration[0].highScore, "----"
         # average of 1 .mutateAnn() call, but sometimes have up to 3?!??
         # (0-2 mutations ea time)
         self.mutateAnn(child)#mutate child from two fittest parents
@@ -109,7 +110,7 @@ class Breeding:
         child = Ann() 
         momScore = mom.highScore
         dadScore = dad.highScore
-        print "momScore: ", momScore, " and dadScore: ", dadScore
+        #print "momScore: ", momScore, " and dadScore: ", dadScore
         total = momScore + dadScore
         parents = [mom, dad] #parents in array for easier indexing
 
@@ -131,6 +132,36 @@ class Breeding:
                     child.data[i][j] = parents[fittest].data[i][j]
                 else:
                      child.data[i][j] = parents[notFit].data[i][j]
+
+        return child
+
+    def annBreedingWeights(self, mom, dad):
+        child = Ann() 
+        momScore = mom.highScore
+        dadScore = dad.highScore
+        #print "momScore: ", momScore, " and dadScore: ", dadScore
+        total = momScore + dadScore
+        parents = [mom, dad] #parents in array for easier indexing
+
+        #choosing fittest parents, so they pass their genes more often
+        if momScore > dadScore: 
+           percent = momScore/total
+           fittest = 0
+           notFit = 1
+        else:
+            percent = dadScore/total
+            fittest = 1
+            notFit = 0
+
+        #TODO try swapping weights instead of entire neurons
+        for i in range(0, len(mom.data) - 1): #iterate through layers
+            for j in range(0, len(mom.data[i])): #iterate through neurons
+              for k in range(0, len(mom.data[i][j].weights)): #iterate through neurons weights
+                chance = random.uniform(0, 1)
+                if chance < percent:
+                  child.data[i][j].weights[k] = parents[fittest].data[i][j].weights[k]
+                else:
+                  child.data[i][j].weights[k] = parents[notFit].data[i][j].weights[k]
 
         return child
 
