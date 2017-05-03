@@ -1,3 +1,11 @@
+for use w/o ghosts: 
+    run for several generations: `python pacman.py -p ANNAgent --frameTime 0 -l mediumClassigNoGhosts`
+    load from file: `python pacman.py -p LoaderAgent -l mediumClassigNoGhosts`
+
+
+
+
+
 usage for current testing: `python pacman.py -p ANNAgent -n NUMBER_OF_RUNS`
 
 # Pacman-Learner
