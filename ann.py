@@ -165,7 +165,7 @@ class Ann:
 
     # assign a name to the ann
     def giveName(self, n):
-	self.name = n
+	    self.name = n
 
     # use Chris' training data and run throug steps 1-7
     def trainShit( self ):
@@ -329,6 +329,34 @@ class Ann:
         print 'Most recent score: ', self.score
         print 'Highest score: ', self.highScore
 
+    def saveFile(self):
+        fileName = "saveData" + self.name + ".txt"
+        saveFile = open(fileName, 'w')
+        saveFile.truncate()
+        counter = 0
+        for i in range(0, len(self.data)):
+            for j in range(0, len(self.data[i])):
+                for k in range(0, len(self.data[i][j].weights)):
+                    data = " " + str(self.data[i][j].weights[k])
+                    #data = "poo"
+                    saveFile.write(data)
+                    saveFile.write("\n")
+        print "Saved: " + str(self.data[0][0].weights[0])
+        saveFile.close()
+   
+ 
+    def loadFile(self):
+        fileName = "saveData" + self.name + ".txt"
+        loadFile = open(fileName, 'rwt')
+        print "Before Load: " + str(self.data[0][0].weights[0])
+        for i in range(0, len(self.data)):
+            for j in range(0, len(self.data[i])):
+                for k in range(0, len(self.data[i][j].weights)):
+                    data = loadFile.readline()
+                    self.data[i][j].weights[k] = float(data)
+        print "After Load: " + str(self.data[0][0].weights[0])
+        loadFile.close()
+        
 
 """
 This is some dummy sample code used to test ANN.
