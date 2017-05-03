@@ -708,8 +708,9 @@ class Game:
                     return
             else:
                 self.state = self.state.generateSuccessor( agentIndex, action )
-                if agentIndex == 0: # CALLS THE TRAIN FUNCTION IF AGENT IS PACMAN
-                    self.train(action, self.state, agentIndex) #&&&&&
+               #Slows down the program, we dont need output to file anymore
+                #if agentIndex == 0: # CALLS THE TRAIN FUNCTION IF AGENT IS PACMAN
+                    #self.train(action, self.state, agentIndex) #&&&&&
 
 
             self.display.update( self.state.data )
