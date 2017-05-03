@@ -108,6 +108,8 @@ class ANNAgent(Agent):
         #1d array to pass as input to ANN
 
         predictedDirection = self.agentAnn.processInput(input_grid)
+        """
+        uncomment this section to print direction ea time pacman chooses one
         if predictedDirection == Directions.NORTH:
             print'Direction: North'
         elif predictedDirection == Directions.EAST:
@@ -118,14 +120,13 @@ class ANNAgent(Agent):
             print'Direction: West'
         else:
             print'Direction unknown!?'
-        #legal = state.getLegalPacmanActions()
+        """
 
         #if predictedDirection in state.getLegalPacmanActions():
         if predictedDirection in state.getLegalPacmanActions():
             #return predictedDirection
             return predictedDirection
         else:
-            print'invalid... stopping'
             return Directions.STOP
 
         #for col in range(4,-1,-1):
