@@ -32,7 +32,6 @@ class Breeding:
             #temp.printAnn()
             self.data[i] = temp
 
-
     def updateAvgScore(self):
         avg = 0
         for i in range(0, len(self.data)):
@@ -48,6 +47,11 @@ class Breeding:
 
     def setGen(self, newAnns):
         self.data = newAnns
+
+    def printAvgScore(self):
+        print "----------- Averages: ",
+        for i in range(0, len(self.avgScores)):
+            print self.avgScores[i],
 
     def getNextGeneration(self):
         sorted_ = sorted(self.data, key=operator.attrgetter('highScore'), reverse=True)#sort anns so highest score is first
@@ -68,7 +72,7 @@ class Breeding:
 
         #Breed children and mutate them
         for i in range(0, len(nextGeneration) - 1):
-            child = self.annBreeding(nextGeneration[i], nextGeneration[i+1])
+            child = self.annBreeding(nextGeneration[0], nextGeneration[i+1])
             self.mutateAnn(child)
             babies.append(child)
 
