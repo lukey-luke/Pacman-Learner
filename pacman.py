@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-NUM_GENERATIONS = 4
+NUM_GENERATIONS = 200
 # pacman.py
 # ---------
 # Licensing Information:  You are free to use or extend these projects for
@@ -703,7 +703,9 @@ if __name__ == '__main__':
         for gen in range(0, NUM_GENERATIONS):
             print 'On generation: ', gen
             for currAnn in breeder.data:
-                print currAnn
+                # This is used to ensure we have different instance #'s for the breeder's anns
+                #print currAnn
+
                 # run game
                 args['pacman'].setAnn(currAnn)#set ann from the pool
                 score = runGames( **args )    #run the game

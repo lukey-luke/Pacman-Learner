@@ -33,6 +33,7 @@ class Ann:
 	self.name = ""
         self.inputs  = []
         self.encodings = [#Euclidean distnaces are calculated from these encodings to determine direction
+                    # try encodings for .8 .2 .2 .2
                     [0.9, 0.1, 0.1, 0.1], #North
                     [0.1, 0.9, 0.1, 0.1], #East
                     [0.1, 0.1, 0.9, 0.1], #South
@@ -44,7 +45,7 @@ class Ann:
                 Directions.SOUTH,
                 Directions.WEST
                 ]
-        self.netStructure = [LENGTH_OF_INPUT, 16, 8, 4, LENGTH_OF_OUTPUT]#just used to describe structure
+        self.netStructure = [LENGTH_OF_INPUT, 48, 24, 12, LENGTH_OF_OUTPUT]#just used to describe structure
         self.constructNetwork()
         self.score     = -9999#last score achieved by this ANN
         self.highScore = -9999#highest score ever achieved by ANN
@@ -60,11 +61,11 @@ class Ann:
 
                 if i < len(self.netStructure)-1:#create list of wghts corresponding to num neurons in next layer
                     for j in range(0, self.netStructure[i+1]):
-                        weight = random.uniform(-0.5, 0.5)# this should be needed
+                        weight = random.uniform(-4.5, 4.5)# this should be needed
                         tempNeuron.weights.append(weight)
                 #tempNeuron.weights = [0.1] * self.netStructure[i+1]
-
                 tempList.append(tempNeuron)
+
             #tempList = [tempNeuron] * self.netStructure[i]
 
             self.data[i] = tempList#add newly created layer to network
@@ -140,7 +141,9 @@ class Ann:
     def getDirection(self):
         eucDist = 9999
         goThisWay = Directions.LEFT
-        for j in range( 0, len(self.data[-1]) ): # for ea node in output layer...
+        print"aVals: "
+        for j in range( 0, len(self.data[-1]) ): # loop through all directional encodings
+            #print self.data[-1][j].aVal
             if self.getEucDist(j) < eucDist:
                 eucDist = self.getEucDist(j)
                 goThisWay = self.directionMapping[j]
@@ -207,7 +210,7 @@ class Ann:
      |____|     |__|  |__|___|  /__|    \___  /  /__/\_ \___|  /____  >
                               \/            \/         \/    \/     \/
     """
-    def Print(self):
+    def printAnn(self):
 	print 
 	print self.name, " ", self.highScore
 	nodeCount = 0
@@ -239,7 +242,7 @@ class Ann:
 	print
 
 
-    def PrintLayer(self, num):
+    def printLayer(self, num):
 	    nodeCount = 0
 	    for i in range(0, num):
 		nodeCount += len(self.data[i])
@@ -267,7 +270,7 @@ class Ann:
 		        conIter += 1
 
 
-    def PrintNeuron(self, lNum, nNum):
+    def printNeuron(self, lNum, nNum):
 	nodeCount = 0
 	for i in range(0, lNum):
 	    nodeCount += len(self.data[i])

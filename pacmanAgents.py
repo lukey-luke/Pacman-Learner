@@ -25,7 +25,8 @@ import time
 "An agent that uses an ANN with 5x5 grid around pacman and outputs a direction to go"
 class ANNAgent(Agent):
     def __init__(self):
-        self.agentAnn = 0
+        self.agentAnn = 0#@@@ ensure that self.agentAnn is the same one as the breeder's
+        #ensure this is actually changing
 
     #Set Ann for agent to use every time it calls get action
     #annFromMain is the Ann() passed down by main
@@ -102,14 +103,16 @@ class ANNAgent(Agent):
     def getAction(self, state):#pass all game state
         "The agent receives a GameState (defined in pacman.py)."
 
+        # 1.) Get the grid.
         #getGrid returns a 2d array with 24 inputs of
+        #1d array to pass as input to ANN
         input_grid = self.getGrid(state)
 
-        #1d array to pass as input to ANN
-
+        # 2.) Input the grid to ANN.
         predictedDirection = self.agentAnn.processInput(input_grid)
         """
         uncomment this section to print direction ea time pacman chooses one
+        """
         if predictedDirection == Directions.NORTH:
             print'Direction: North'
         elif predictedDirection == Directions.EAST:
@@ -120,43 +123,16 @@ class ANNAgent(Agent):
             print'Direction: West'
         else:
             print'Direction unknown!?'
-        """
 
-        #if predictedDirection in state.getLegalPacmanActions():
+        # 3.) Return the results from ANN.
         if predictedDirection in state.getLegalPacmanActions():
             #return predictedDirection
             return predictedDirection
         else:
             return Directions.STOP
 
-        #for col in range(4,-1,-1):
-        #    for row in range(0,5):
-        #        print(grid[row][col]),
-        #    print("\n")
-        #time.sleep(1)
 
-
-        #for i,a in enumerate(walls):
-            #print i, ": ", a
-
-
-        # 1.) Get the grid.
-        # 2.) Input the grid to ANN.
-        # 3.) Return the results from ANN.
-
-
-        """
-        legal = state.getLegalPacmanActions()
-        current = state.getPacmanState().configuration.direction
-        if current == Directions.STOP: current = Directions.NORTH
-        left = Directions.LEFT[current]
-        if left in legal: return left
-        if current in legal: return current
-        if Directions.RIGHT[current] in legal: return Directions.RIGHT[current]
-        if Directions.LEFT[left] in legal: return Directions.LEFT[left]
-        return Directions.STOP
-        """
-
+# Agent that turns left wheever it can
 class LeftTurnAgent(game.Agent):
     "An agent that turns left at every opportunity"
 
