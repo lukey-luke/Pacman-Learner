@@ -42,9 +42,9 @@ class ANNAgent(Agent):
         #    -start of the grid
         # -it then populates the grid based on the parsing
         pacman_position = state.getPacmanPosition()
-        grid_start = [pacman_position[0]-2,pacman_position[1]-2]
-        ghost1 = [state.getGhostPosition(1)[0] - grid_start[0], state.getGhostPosition(1)[1] - grid_start[1] ]
-        ghost2 = [state.getGhostPosition(2)[0] - grid_start[0], state.getGhostPosition(2)[1] - grid_start[1] ]
+        grid_start = [pacman_position[0]-1,pacman_position[1]-1]
+        ####ghost1 = [state.getGhostPosition(1)[0] - grid_start[0], state.getGhostPosition(1)[1] - grid_start[1] ]
+        ####ghost2 = [state.getGhostPosition(2)[0] - grid_start[0], state.getGhostPosition(2)[1] - grid_start[1] ]
         food = state.getFood() 
         capsules = state.getCapsules()
         walls = state.getWalls()
@@ -58,11 +58,11 @@ class ANNAgent(Agent):
         #       -Ghosts: [1,0,0,0]
         #       -Pacman: @ is used as a placeholder, but will be deleted later
         grid = []
-        for col in range(0,5):
+        for col in range(0,3):
             grid.append([]) #append a list to the grid 5 times(making an empty 2d list)
-            for row in range(0,5):
+            for row in range(0,3):
                 #checks for out of bound locations, making '&' if it the spot is out 
-                if ( (row + grid_start[1]) >= len(walls[0]) ) or ( (col + grid_start[0]) >= 20 ) or ( (row + grid_start[1]) < 0 ) or ( (col + grid_start[0]) <0 ):
+                if ( (row + grid_start[1]) >= len(walls[0]) ) or ( (col + grid_start[0]) >= 19 ) or ( (row + grid_start[1]) < 0 ) or ( (col + grid_start[0]) <0 ):
                     grid[col].append([0,0,0,1]) # out of bounds
                 else:
                     #
@@ -74,23 +74,23 @@ class ANNAgent(Agent):
                         grid[col].append([0,0,1,0])# empty space
 
 
-        grid[2][2] = '@' #pacman location(always in the middle)
+        grid[1][1] = '@' #pacman location(always in the middle)
 
-        #add both ghost to grid if position is inside grid range 
-        if ghost1[0] < 5 and ghost1[1] < 5 and ghost1[0] > -1 and ghost1[1] > -1:
-            grid[int(ghost1[0])][int(ghost1[1])] = [1,0,0,0]
-        if ghost2[0] < 5 and ghost2[1] < 5 and ghost2[0] > -1 and ghost2[1] > -1:
-            grid[int(ghost2[0])][int(ghost2[1])] = [1,0,0,0]
+####        #add both ghost to grid if position is inside grid range 
+####        if ghost1[0] < 3 and ghost1[1] < 3 and ghost1[0] > -1 and ghost1[1] > -1:
+####            grid[int(ghost1[0])][int(ghost1[1])] = [1,0,0,0]
+####        if ghost2[0] < 3 and ghost2[1] < 3 and ghost2[0] > -1 and ghost2[1] > -1:
+####            grid[int(ghost2[0])][int(ghost2[1])] = [1,0,0,0]
 
         #iterates through capsule list and adds if position is inside grid range
         for i in range(0,len(capsules)):
             distance = [capsules[i][0] - grid_start[0], capsules[i][1]-grid_start[1] ]
-            if distance[0] < 5 and distance[1] < 5 and distance[0] > -1 and distance[1] > -1:
+            if distance[0] < 3 and distance[1] < 3 and distance[0] > -1 and distance[1] > -1:
                 grid[distance[0]][distance[1]] = [0,1,0,0]
 
         input_grid= [] #&&&&
-        for col in range(4,-1,-1):
-            for row in range(0,5):
+        for col in range(2,-1,-1):
+            for row in range(0,3):
                 for i in range(0,len(grid[row][col])):
                     input_grid.append(grid[row][col][i])
 
@@ -112,6 +112,110 @@ class ANNAgent(Agent):
         predictedDirection = self.agentAnn.processInput(input_grid)
         """
         uncomment this section to print direction ea time pacman chooses one
+        if predictedDirection == Directions.NORTH:
+            print'Direction: North'
+        elif predictedDirection == Directions.EAST:
+            print'Direction: East'
+        elif predictedDirection == Directions.SOUTH:
+            print'Direction: South'
+        elif predictedDirection == Directions.WEST:
+            print'Direction: West'
+        else:
+            print'Direction unknown!?'
+        """
+
+        # 3.) Return the results from ANN.
+        if predictedDirection in state.getLegalPacmanActions():
+            #return predictedDirection
+            return predictedDirection
+        else:
+            return Directions.STOP
+
+class LoaderAgent(game.Agent):
+    "An agent that runs game using specified ann"
+
+    def __init__(self):
+        self.agentAnn = 0#@@@ ensure that self.agentAnn is the same one as the breeder's
+        #ensure this is actually changing
+
+
+    #Set Ann for agent to use every time it calls get action
+    #annFromMain is the Ann() passed down by main
+    def setAnn(self, annFromMain):
+        self.agentAnn = annFromMain
+
+
+    def getGrid(self, state): 
+        #Function that parses through the state to extract:
+        #    -pacmans position
+        #    -ghost position
+        #    -food positions
+        #    -capsule positions
+        #    -start of the grid
+        # -it then populates the grid based on the parsing
+        pacman_position = state.getPacmanPosition()
+        grid_start = [pacman_position[0]-1,pacman_position[1]-1]
+        ####ghost1 = [state.getGhostPosition(1)[0] - grid_start[0], state.getGhostPosition(1)[1] - grid_start[1] ]
+        ####ghost2 = [state.getGhostPosition(2)[0] - grid_start[0], state.getGhostPosition(2)[1] - grid_start[1] ]
+        food = state.getFood() 
+        capsules = state.getCapsules()
+        walls = state.getWalls()
+        grid = []
+
+        #INSERTS 4 NUMBERS INTO EACH CELL OF THE GRID BASED ON WHAT IT SEES
+        #   LEGEND:
+        #       -wall and out of bound: [0,0,0,1]
+        #       -empty spaces: [0,0,1,0]
+        #       -pellets and capsules: [0,1,0,0]
+        #       -Ghosts: [1,0,0,0]
+        #       -Pacman: @ is used as a placeholder, but will be deleted later
+        grid = []
+        for col in range(0,3):
+            grid.append([]) #append a list to the grid 5 times(making an empty 2d list)
+            for row in range(0,3):
+                #checks for out of bound locations, making '&' if it the spot is out 
+                if ( (row + grid_start[1]) >= len(walls[0]) ) or ( (col + grid_start[0]) >= 19 ) or ( (row + grid_start[1]) < 0 ) or ( (col + grid_start[0]) <0 ):
+                    grid[col].append([0,0,0,1]) # out of bounds
+                else:
+                    #
+                    if walls[ col+grid_start[0] ][ row+grid_start[1] ] == True:
+                        grid[col].append([0,0,0,1])# wall 
+                    elif food[ col+grid_start[0] ][ row+grid_start[1] ] == True:
+                        grid[col].append([0,1,0,0])# pellet
+                    else:
+                        grid[col].append([0,0,1,0])# empty space
+
+
+        grid[1][1] = '@' #pacman location(always in the middle)
+
+####        #add both ghost to grid if position is inside grid range 
+####        if ghost1[0] < 3 and ghost1[1] < 3 and ghost1[0] > -1 and ghost1[1] > -1:
+####            grid[int(ghost1[0])][int(ghost1[1])] = [1,0,0,0]
+####        if ghost2[0] < 3 and ghost2[1] < 3 and ghost2[0] > -1 and ghost2[1] > -1:
+####            grid[int(ghost2[0])][int(ghost2[1])] = [1,0,0,0]
+
+        #iterates through capsule list and adds if position is inside grid range
+        for i in range(0,len(capsules)):
+            distance = [capsules[i][0] - grid_start[0], capsules[i][1]-grid_start[1] ]
+            if distance[0] < 3 and distance[1] < 3 and distance[0] > -1 and distance[1] > -1:
+                grid[distance[0]][distance[1]] = [0,1,0,0]
+
+        input_grid= [] #&&&&
+        for col in range(2,-1,-1):
+            for row in range(0,3):
+                for i in range(0,len(grid[row][col])):
+                    input_grid.append(grid[row][col][i])
+
+
+        del input_grid[len(input_grid)/2] # we don't need the square pacman is in...
+
+        return input_grid
+
+    def getAction(self, state):
+        input_grid = self.getGrid(state)
+        predictedDirection = self.agentAnn.processInput(input_grid)
+        """
+        uncomment this section to print direction ea time pacman chooses one
         """
         if predictedDirection == Directions.NORTH:
             print'Direction: North'
@@ -126,9 +230,9 @@ class ANNAgent(Agent):
 
         # 3.) Return the results from ANN.
         if predictedDirection in state.getLegalPacmanActions():
-            #return predictedDirection
             return predictedDirection
         else:
+            print 'actually invalid... STOP'
             return Directions.STOP
 
 

@@ -620,7 +620,8 @@ class Game:
         agentIndex = self.startingIndex
         numAgents = len( self.agents )
 
-        while not self.gameOver:
+        while not self.gameOver and self.numMoves < 20:
+            #print'self.numMoves = ', self.numMoves
             # Fetch the next agent
             agent = self.agents[agentIndex]
             move_time = 0
@@ -723,6 +724,7 @@ class Game:
             if agentIndex == numAgents + 1: self.numMoves += 1
             # Next agent
             agentIndex = ( agentIndex + 1 ) % numAgents
+            self.numMoves += 1
 
             if _BOINC_ENABLED:
                 boinc.set_fraction_done(self.getProgress())
