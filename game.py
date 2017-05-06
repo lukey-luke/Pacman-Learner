@@ -620,9 +620,11 @@ class Game:
         agentIndex = self.startingIndex
         numAgents = len( self.agents )
 
+        prevScore = -9999
         while not self.gameOver:
             # Fetch the next agent
             agent = self.agents[agentIndex]
+
             move_time = 0
             skip_action = False
             # Generate an observation of the state
@@ -726,6 +728,15 @@ class Game:
 
             if _BOINC_ENABLED:
                 boinc.set_fraction_done(self.getProgress())
+
+            # If pacman's score improved, time to train ann
+            if agentIndex == 0 and self.state.getScore() > prevScore:
+                print 'training b/c score inc'
+                self.agents[0].trainStep()
+
+            # save score in prevScore to determine if we will train
+            if agentIndex == 0:
+                prevScore = self.state.getScore()
 
         # inform a learning agent of the game result
         for agentIndex, agent in enumerate(self.agents):

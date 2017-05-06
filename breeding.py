@@ -7,7 +7,7 @@ from ann import Neuron
 import copy
 
 MUTATION_SCALAR = 5 # weight + weight* or weight/MUTATION_SCALAR
-ANN_COUNT = 32 # ANNs we'll store 
+ANN_COUNT = 128 # ANNs we'll store 
 
 class Breeding:
     def __init__(self):
@@ -21,7 +21,7 @@ class Breeding:
         #chrisMartinez.printLayer(3)
         """
         for i in range(0, 9):
-            chrisMartinez.trainShit()
+            chrisMartinez.trainTheChrisWay()
         """
 
         self.data[0] = chrisMartinez
@@ -110,7 +110,7 @@ class Breeding:
         child = Ann() 
         momScore = mom.highScore
         dadScore = dad.highScore
-        #print "momScore: ", momScore, " and dadScore: ", dadScore
+        print "momScore: ", momScore, " and dadScore: ", dadScore
         total = momScore + dadScore
         parents = [mom, dad] #parents in array for easier indexing
 

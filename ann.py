@@ -4,7 +4,7 @@ from math import sqrt
 from game import Directions
 LENGTH_OF_INPUT  = 96
 LENGTH_OF_OUTPUT = 4
-NUM_OF_LAYERS    = 5
+NUM_OF_LAYERS    = 4
 ALPHA_VALUE      = 0.01
 
 class Neuron:
@@ -45,7 +45,7 @@ class Ann:
                 Directions.SOUTH,
                 Directions.WEST
                 ]
-        self.netStructure = [LENGTH_OF_INPUT, 48, 24, 12, LENGTH_OF_OUTPUT]#just used to describe structure
+        self.netStructure = [LENGTH_OF_INPUT, 48, 48, LENGTH_OF_OUTPUT]#just used to describe structure
         self.constructNetwork()
         self.score     = -9999#last score achieved by this ANN
         self.highScore = -9999#highest score ever achieved by ANN
@@ -141,7 +141,6 @@ class Ann:
     def getDirection(self):
         eucDist = 9999
         goThisWay = Directions.LEFT
-        print"aVals: "
         for j in range( 0, len(self.data[-1]) ): # loop through all directional encodings
             #print self.data[-1][j].aVal
             if self.getEucDist(j) < eucDist:
@@ -171,7 +170,7 @@ class Ann:
 	    self.name = n
 
     # use Chris' training data and run throug steps 1-7
-    def trainShit( self ):
+    def trainTheChrisWay( self ):
         nes = open("won1_input.txt").read().splitlines()
         
         newInputData = []

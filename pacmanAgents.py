@@ -31,7 +31,7 @@ class ANNAgent(Agent):
     #Set Ann for agent to use every time it calls get action
     #annFromMain is the Ann() passed down by main
     def setAnn(self, annFromMain):
-        self.agentAnn = annFromMain
+        self.agentAnn = annFromMain# this refers to the same exact ann, not a copy
 
     def getGrid(self, state): 
         #Function that parses through the state to extract:
@@ -109,27 +109,43 @@ class ANNAgent(Agent):
         input_grid = self.getGrid(state)
 
         # 2.) Input the grid to ANN.
-        predictedDirection = self.agentAnn.processInput(input_grid)
+        self.predictedDirection = self.agentAnn.processInput(input_grid)
         """
         uncomment this section to print direction ea time pacman chooses one
-        """
-        if predictedDirection == Directions.NORTH:
+        if self.predictedDirection == Directions.NORTH:
             print'Direction: North'
-        elif predictedDirection == Directions.EAST:
+        elif self.predictedDirection == Directions.EAST:
             print'Direction: East'
-        elif predictedDirection == Directions.SOUTH:
+        elif self.predictedDirection == Directions.SOUTH:
             print'Direction: South'
-        elif predictedDirection == Directions.WEST:
+        elif self.predictedDirection == Directions.WEST:
             print'Direction: West'
         else:
             print'Direction unknown!?'
+        """
 
         # 3.) Return the results from ANN.
-        if predictedDirection in state.getLegalPacmanActions():
-            #return predictedDirection
-            return predictedDirection
+        if self.predictedDirection in state.getLegalPacmanActions():
+            #return self.predictedDirection
+            return self.predictedDirection
         else:
             return Directions.STOP
+
+    def trainStep(self):
+        encodedDirection = [0.1, 0.1, 0.1, 0.1]
+
+        if self.predictedDirection == Directions.NORTH:
+            encodedDirection = [0.9, 0.1, 0.1, 0.1]
+        elif self.predictedDirection == Directions.EAST:
+            encodedDirection = [0.1, 0.9, 0.1, 0.1]
+        elif self.predictedDirection == Directions.SOUTH:
+            encodedDirection = [0.1, 0.1, 0.9, 0.1]
+        else: #self.predictedDirection == Directions.WEST
+            encodedDirection = [0.1, 0.1, 0.1, 0.9]
+
+        self.agentAnn.step4(encodedDirection)
+        self.agentAnn.step5and6()
+        self.agentAnn.step7()
 
 
 # Agent that turns left wheever it can
