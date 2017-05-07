@@ -24,6 +24,7 @@ from util import *
 import time, os
 import traceback
 import sys
+import util
 
 #######################
 # Parts worth reading #
@@ -454,6 +455,11 @@ class GameStateData:
 
         for x, y in self.capsules:
             map[x][y] = 'o'
+        
+        print'nice array'
+        for j in range(map):
+            for i in range(map[j]):
+                print map[j][i]
 
         return str(map) + ("\nScore: %d\n" % self.score)
 
@@ -505,8 +511,9 @@ class GameStateData:
         self._eaten = [False for a in self.agentStates]
 
 try:
-    import boinc
-    _BOINC_ENABLED = True
+    #import boinc
+    #_BOINC_ENABLED = True
+    _BOINC_ENABLED = False
 except:
     _BOINC_ENABLED = False
 
@@ -564,12 +571,14 @@ class Game:
         sys.stderr = OLD_STDERR
 
 
+    # This is where the magic happens.
     def run( self ):
         """
         Main control loop for game play.
         """
         self.display.initialize(self.state.data)
         self.numMoves = 0
+
 
         ###self.display.initialize(self.state.makeObservation(1).data)
         # inform learning agents of the game start
@@ -611,9 +620,11 @@ class Game:
         agentIndex = self.startingIndex
         numAgents = len( self.agents )
 
+        prevScore = -9999
         while not self.gameOver:
             # Fetch the next agent
             agent = self.agents[agentIndex]
+
             move_time = 0
             skip_action = False
             # Generate an observation of the state
@@ -686,7 +697,8 @@ class Game:
                 action = agent.getAction(observation)
             self.unmute()
 
-            # Execute the action
+            # Execute the action &&&
+
             self.moveHistory.append( (agentIndex, action) )
             if self.catchExceptions:
                 try:
@@ -698,8 +710,11 @@ class Game:
                     return
             else:
                 self.state = self.state.generateSuccessor( agentIndex, action )
+               #Slows down the program, we dont need output to file anymore
+                #if agentIndex == 0: # CALLS THE TRAIN FUNCTION IF AGENT IS PACMAN
+                    #self.train(action, self.state, agentIndex) #&&&&&
 
-            # Change the display
+
             self.display.update( self.state.data )
             ###idx = agentIndex - agentIndex % 2 + 1
             ###self.display.update( self.state.makeObservation(idx).data )
@@ -714,6 +729,15 @@ class Game:
             if _BOINC_ENABLED:
                 boinc.set_fraction_done(self.getProgress())
 
+            # If pacman's score improved, time to train ann
+            if agentIndex == 0 and self.state.getScore() > prevScore:
+                print 'training b/c score inc'
+                self.agents[0].trainStep()
+
+            # save score in prevScore to determine if we will train
+            if agentIndex == 0:
+                prevScore = self.state.getScore()
+
         # inform a learning agent of the game result
         for agentIndex, agent in enumerate(self.agents):
             if "final" in dir( agent ) :
@@ -727,3 +751,85 @@ class Game:
                     self.unmute()
                     return
         self.display.finish()
+        return self.state.getScore()
+
+
+
+    #&&&&
+    #Helper function acts extremely similar to 'getGrid' function
+    #   -Prints grid to input.txt
+    #   -Prints output to directions.txt
+    def train( self, action, state, agentIndex ):
+
+        #GRABS ALL THE NECESSARY DATA
+        pacman_position = state.getPacmanPosition()
+        grid_start = [pacman_position[0]-2,pacman_position[1]-2]
+        ghost1 = [state.getGhostPosition(1)[0] - grid_start[0], state.getGhostPosition(1)[1] - grid_start[1] ]
+        ghost2 = [state.getGhostPosition(2)[0] - grid_start[0], state.getGhostPosition(2)[1] - grid_start[1] ]
+        food = state.getFood() 
+        capsules = state.getCapsules()
+        walls = state.getWalls()
+        grid = []
+
+
+        #INSERTS 4 NUMBERS INTO EACH CELL OF THE GRID BASED ON WHAT IT SEES
+        #   LEGEND:
+        #       -wall and out of bound: [0,0,0,1]
+        #       -empty spaces: [0,0,1,0]
+        #       -pellets and capsules: [0,1,0,0]
+        #       -Ghosts: [1,0,0,0]
+        #       -Pacman: @ is used as a placeholder, but will be deleted later
+        for col in range(0,5):
+            grid.append([])
+            for row in range(0,5):
+                if ( (row + grid_start[1]) >= len(walls[0]) ) or ( (col + grid_start[0]) >= 20 ) or ( (row + grid_start[1]) < 0 ) or ( (col + grid_start[0]) <0 ):
+                    grid[col].append([0,0,0,1])
+                else:
+                    if walls[ col+grid_start[0] ][ row+grid_start[1] ] == True:
+                        grid[col].append([0,0,0,1])
+                    elif food[ col+grid_start[0] ][ row+grid_start[1] ] == True:
+                        grid[col].append([0,1,0,0])
+                    else:
+                        grid[col].append([0,0,1,0])
+
+        grid[2][2] = '@'
+        if ghost1[0] < 5 and ghost1[1] < 5 and ghost1[0] > -1 and ghost1[1] > -1:
+            grid[int(ghost1[0])][int(ghost1[1])] = [1,0,0,0]
+        if ghost2[0] < 5 and ghost2[1] < 5 and ghost2[0] > -1 and ghost2[1] > -1:
+            grid[int(ghost2[0])][int(ghost2[1])] = [1,0,0,0]
+
+        for i in range(0,len(capsules)):
+            distance = [capsules[i][0] - grid_start[0], capsules[i][1]-grid_start[1] ]
+            if distance[0] < 5 and distance[1] < 5 and distance[0] > -1 and distance[1] > -1:
+                grid[distance[0]][distance[1]] = [0,1,0,0]
+
+
+        #Turs the 3d list into a 1d list of 97 elements(pacman will be deleted)
+        input_grid= []
+        for col in range(4,-1,-1):
+            for row in range(0,5):
+                for i in range(0,len(grid[row][col])):
+                    input_grid.append(grid[row][col][i])
+
+
+        del input_grid[len(input_grid)/2] # we don't need the square pacman is in...
+
+
+        #Appends grid to input.txt
+        fout1= open('input.txt', 'a+')
+        for item in input_grid:
+              fout1.write("%s" % item)
+        fout1.write("\n")
+
+        #Appends direction used to input.txt
+        fout2= open("direction.txt","a+")
+        if action == "Stop":
+            fout2.write('stopped \n') 
+        if action == "North":
+            fout2.write('.9 .1 .1 .1 \n') 
+        if action == "East":
+            fout2.write('.1 .9 .1 .1 \n') 
+        if action == "South":
+            fout2.write('.1 .1 .9 .1 \n') 
+        if action == "West":
+            fout2.write('.1 .1 .1 .9 \n') 
