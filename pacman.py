@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-NUM_GENERATIONS = 200
 # pacman.py
 # ---------
 # Licensing Information:  You are free to use or extend these projects for
@@ -47,7 +45,6 @@ from game import Directions
 from game import Actions
 from util import nearestPoint
 from util import manhattanDistance
-from breeding import Breeding
 import util, layout
 import sys, types, time, random, os
 
@@ -214,11 +211,6 @@ class GameState:
 
     def isWin( self ):
         return self.data._win
-
-#####    def mangoes(self):
-#####        pineapple = self.data.layout
-#####        for i in pineapple:
-#####
 
     #############################################
     #             Helper methods:               #
@@ -633,13 +625,9 @@ def replayGame( layout, actions, display ):
 
     display.finish()
 
-#########################################################
-# This is where main is - Program execution starts hurr # @@@
-#########################################################
 def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0, catchExceptions=False, timeout=30 ):
     import __main__
     __main__.__dict__['_display'] = display
-    # More or less beginning of code execution
 
     rules = ClassicGameRules(timeout)
     games = []
@@ -654,7 +642,6 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
         else:
             gameDisplay = display
             rules.quiet = False
-        # SPECIFY ANN for our pacman, IF he is an ANNAGENT
         game = rules.newGame( layout, pacman, ghosts, gameDisplay, beQuiet, catchExceptions)
         game.run()
         if not beQuiet: games.append(game)
@@ -671,13 +658,12 @@ def runGames( layout, pacman, ghosts, display, numGames, record, numTraining = 0
         scores = [game.state.getScore() for game in games]
         wins = [game.state.isWin() for game in games]
         winRate = wins.count(True)/ float(len(wins))
+        print 'Average Score:', sum(scores) / float(len(scores))
         print 'Scores:       ', ', '.join([str(score) for score in scores])
-        #print 'Average Score:', sum(scores) / float(len(scores))
-        #print 'Win Rate:      %d/%d (%.2f)' % (wins.count(True), len(wins), winRate)
-        #print 'Record:       ', ', '.join([ ['Loss', 'Win'][int(w)] for w in wins])
-        #print 'Get rekt n00b.'
+        print 'Win Rate:      %d/%d (%.2f)' % (wins.count(True), len(wins), winRate)
+        print 'Record:       ', ', '.join([ ['Loss', 'Win'][int(w)] for w in wins])
 
-    return scores[len(scores) -1]
+    return games
 
 if __name__ == '__main__':
     """
@@ -691,47 +677,7 @@ if __name__ == '__main__':
     > python pacman.py --help
     """
     args = readCommand( sys.argv[1:] ) # Get game components based on input
-    print (sys.argv[1:])
-    print (sys.argv[2:3])
-    print 'hi'
-    print args['pacman']
-    print 'hi'
-    if sys.argv[2:3] == ['ANNAgent']:
-        print'Using Ann'
-        breeder = Breeding()
-        breeder.initialize()#Creates and populates NUM_OF_ANNS Ann()s with starting data (Chris' training data)
-        for gen in range(0, NUM_GENERATIONS):
-            print 'On generation: ', gen
-            for currAnn in breeder.data:
-                # This is used to ensure we have different instance #'s for the breeder's anns
-                #print currAnn
-
-                # run game
-                args['pacman'].setAnn(currAnn)#set ann from the pool
-                score = runGames( **args )    #run the game
-                print score
-                # update score
-                currAnn.setScore(score)
-                currAnn.printScore()
-            # stuff b/w generations
-            breeder.getNextGeneration()
-
-
-        """
-            if WE_HAVE_ANN_AGENT:
-                poolOfAnns = breeder.data
-                #for NUMBER_OF_GENERATIONS
-                #for ann in ANN_POOL_SIZE
-                    score = runGames( **args )
-                print score
-            else:
-                runGames
-        """
-        
-    else:
-        print'Continue as normal'
-        runGames( **args )
-
+    runGames( **args )
 
     # import cProfile
     # cProfile.run("runGames( **args )")

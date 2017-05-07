@@ -41,7 +41,6 @@ import util
 import time
 import search
 
-
 class GoWestAgent(Agent):
     "An agent that goes West until it can't."
 
